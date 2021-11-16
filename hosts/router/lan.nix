@@ -12,9 +12,9 @@
   networking.vlans.public-nat = { interface = "enp4s0"; id = 37; };
 
   networking.interfaces.private = {
-    ipv4.addresses = [
-      { address = "192.168.42.0"; prefixLength = 24; }
-    ];
+    #ipv4.addresses = [
+    #  { address = "192.168.42.0"; prefixLength = 24; }
+    #];
     ipv6.addresses = [
       { address = "2a0f:5382:acab:1342::1"; prefixLength = 64; }
     ];
@@ -67,12 +67,12 @@
     enable = true;
     interfaces = [ "public" ];
     extraConfig = ''
-      subnet 192.164.42.0 netmask 255.255.255.0 {
-        range 192.164.42.20 192.164.42.254;
-        option domain-name-servers 1.1.1.1;
-        option routers 192.168.42.1;
-        interface private;
-      }
+      #subnet 192.164.42.0 netmask 255.255.255.0 {
+      #  range 192.164.42.20 192.164.42.254;
+      #  option domain-name-servers 1.1.1.1;
+      #  option routers 192.168.42.1;
+      #  interface private;
+      #}
       subnet 45.158.40.192 netmask 255.255.255.192 {
         range 45.158.40.201 45.158.40.254;
         option domain-name-servers 1.1.1.1;
