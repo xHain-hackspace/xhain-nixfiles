@@ -3,6 +3,8 @@
 {
   imports = [
     ./users.nix
+    ./nginx
+    ./snmp
     ../modules
   ];
 

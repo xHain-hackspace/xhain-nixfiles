@@ -13,8 +13,8 @@
   boot.loader.grub.device = "/dev/sda";
   boot.kernelParams = [ "console=ttyS0,115200n8" "console=tty0" "panic=1" "boot.panic_on_fail" ];
 
-  networking.hostName = "router";
-  networking.domain = "lan.xhain.space";
+  networking.hostName = "xhain";
+  networking.domain = "luepke.email";
   networking.useDHCP = false;
   networking.interfaces.enp1s0.useDHCP = true;
   networking.useNetworkd = true;
