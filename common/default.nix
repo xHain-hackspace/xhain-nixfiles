@@ -5,6 +5,7 @@
     ./users.nix
     ./nginx
     ./snmp
+    ./prometheus
     ../modules
   ];
 
