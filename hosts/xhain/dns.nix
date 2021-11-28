@@ -13,6 +13,14 @@
       "192.168.12.0/23"
       "2a0f:5382:acab:1312::/64"
     ];
+    zones = [
+      {
+        name = "xhain.space.";
+        master = true;
+        slaves = [ ];
+        file = ./xhain.space.zone;
+      }
+    ];
   };
 
   networking.firewall.allowedUDPPorts = [ 53 ];
