@@ -16,6 +16,7 @@
 
   services.prometheus = {
     enable = true;
+    extraFlags = [ "--web.external-url='https://xhain.luepke.email/prometheus/'" "--web.route-prefix='/'" ];
     listenAddress = "127.0.0.1";
     globalConfig.scrape_interval = "15s";
     scrapeConfigs = let
