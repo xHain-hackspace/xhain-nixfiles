@@ -67,22 +67,42 @@
     enable = true;
     interfaces = [ "intern" ];
     extraConfig = ''
+      include "/etc/bind/rndc.key";
+      ddns-updates on;
+      zone lan.xhain.space. {
+        primary 127.0.0.1;
+        key "rndc-key";
+      }
+      zone hosting.xhain.space. {
+        primary 127.0.0.1;
+        key "rndc-key";
+      }
+      zone guest.xhain.space. {
+        primary 127.0.0.1;
+        key "rndc-key";
+      }
       subnet 192.168.42.0 netmask 255.255.254.0 {
         range 192.168.42.20 192.168.43.254;
-        option domain-name-servers 192.168.42.1;
         option routers 192.168.42.1;
+        option domain-name-servers 192.168.42.1;
+        option domain-search "lan.xhain.space.";
+        ddns-domainname "lan.xhain.space.";
         interface intern;
       }
       subnet 45.158.40.192 netmask 255.255.255.192 {
         range 45.158.40.201 45.158.40.254;
-        option domain-name-servers 45.158.40.193;
         option routers 45.158.40.193;
+        option domain-name-servers 45.158.40.193;
+        option domain-search "hosting.xhain.space.";
+        ddns-domainname "hosting.xhain.space.";
         interface hosting;
       }
       subnet 192.168.12.0 netmask 255.255.254.0 {
         range 192.168.12.20 192.168.13.254;
-        option domain-name-servers 192.168.12.1;
         option routers 192.168.12.1;
+        option domain-name-servers 192.168.12.1;
+        option domain-search "guest.xhain.space.";
+        ddns-domainname "guest.xhain.space.";
         interface guest;
       }
     '';
