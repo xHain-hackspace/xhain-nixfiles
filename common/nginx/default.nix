@@ -4,7 +4,7 @@
   users.users.nginx.extraGroups = [ "acme" ];
   users.users.nginx.isSystemUser = true;
   security.acme = {
-    email = "acme-xhain@luepke.email";
+    email = "acme@x-hain.de";
     acceptTerms = true;
   };
   networking.firewall.allowedTCPPorts = [ 80 443 ];
