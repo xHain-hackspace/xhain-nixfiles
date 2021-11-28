@@ -1,10 +1,14 @@
 $TTL 3600
-@               IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021112802 7200 900 1209600 86400
+@               IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021112803 7200 900 1209600 86400
                 IN      NS         ns1.xhain.space.
-		IN	CNAME	   ns1.xhain.space.
+		IN      A          45.158.40.192
+                IN      AAAA       2a0f:5382:acab:1300::1
+
+router          IN      A          45.158.40.192
+                IN      AAAA       2a0f:5382:acab:1300::1
 ns1             IN      A          45.158.40.192
                 IN      AAAA       2a0f:5382:acab:1300::1
 
-lan		IN	NS	ns1.xhain.space.
-hosting		IN	NS	ns1.xhain.space.
-guest		IN	NS	ns1.xhain.space.
+lan             IN      NS         ns1.xhain.space.
+hosting         IN      NS         ns1.xhain.space.
+guest           IN      NS         ns1.xhain.space.
