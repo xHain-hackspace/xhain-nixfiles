@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./wireguard.nix
     ./lan.nix
+    ./dns.nix
     ../../common
   ];
 
