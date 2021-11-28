@@ -44,21 +44,21 @@
         prefix 2a0f:5382:acab:1342::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2606:4700:4700::1111 2606:4700:4700::1001 {};
+        RDNSS 2a0f:5382:acab:1342::1 {};
       };
       interface hosting {
         AdvSendAdvert on;
         prefix 2a0f:5382:acab:1337::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2606:4700:4700::1111 2606:4700:4700::1001 {};
+        RDNSS 2a0f:5382:acab:1337::1 {};
       };
       interface guest {
         AdvSendAdvert on;
         prefix 2a0f:5382:acab:1312::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2606:4700:4700::1111 2606:4700:4700::1001 {};
+        RDNSS 2a0f:5382:acab:1312::1 {};
       };
     '';
   };
@@ -69,19 +69,19 @@
     extraConfig = ''
       subnet 192.168.42.0 netmask 255.255.254.0 {
         range 192.168.42.20 192.168.43.254;
-        option domain-name-servers 1.1.1.1;
+        option domain-name-servers 192.168.42.1;
         option routers 192.168.42.1;
         interface intern;
       }
       subnet 45.158.40.192 netmask 255.255.255.192 {
         range 45.158.40.201 45.158.40.254;
-        option domain-name-servers 1.1.1.1;
+        option domain-name-servers 45.158.40.193;
         option routers 45.158.40.193;
         interface hosting;
       }
       subnet 192.168.12.0 netmask 255.255.254.0 {
         range 192.168.12.20 192.168.13.254;
-        option domain-name-servers 1.1.1.1;
+        option domain-name-servers 192.168.12.1;
         option routers 192.168.12.1;
         interface guest;
       }
