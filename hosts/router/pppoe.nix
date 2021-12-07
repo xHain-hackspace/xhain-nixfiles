@@ -1,8 +1,13 @@
 { config , ... }:
 
 {
+  secrets.pppoe_pap_secrets.owner = "systemd-network"; # todo: find the right owner
+
   environment.etc = {
-    "ppp/pap-secrets".text = "test";
+    "ppp/pap-secrets" = { 
+        source = config.secrets.pppoe_pap_secrets.path;
+        mode = "0400";
+      };
   };
 
   services.pppd = {
