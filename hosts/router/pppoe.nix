@@ -1,7 +1,7 @@
 { config , ... }:
 
 {
-  # todo: find a way to load pppoe kernel module
+  boot.kernelModules = [ "pppoe" ];
   
   secrets.pppoe_pap_secrets = {}; 
 
@@ -17,10 +17,7 @@
       dsl = {
         config = 
         ''        
-          plugin rp-pppoe.so 
-
-          #todo: network interface
-          eth1
+          plugin rp-pppoe.so enp2s0
 
           name "H1und1/ui2887-291@online.de"
 
