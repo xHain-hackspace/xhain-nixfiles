@@ -3,12 +3,11 @@
 {
   # todo: find a way to load pppoe kernel module
   
-  secrets.pppoe_pap_secrets.owner = "systemd-network"; # todo: find the right owner
+  secrets.pppoe_pap_secrets = {}; 
 
   environment.etc = {
     "ppp/pap-secrets" = { 
         source = config.secrets.pppoe_pap_secrets.path;
-        mode = "0400";
       };
   };
 
@@ -16,8 +15,6 @@
     enable = true;
     peers = {
       dsl = {
-        autostart = true;
-        enable = true;
         config = 
         ''        
           plugin rp-pppoe.so 
