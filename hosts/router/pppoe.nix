@@ -5,6 +5,8 @@
   
   secrets.pppoe_pap_secrets = {}; 
 
+  networking.interfaces.enp2s0 = {  };
+
   environment.etc = {
     "ppp/pap-secrets" = { 
         source = config.secrets.pppoe_pap_secrets.path;
