@@ -34,14 +34,22 @@
     EDITOR = "vim"; # fight me :-)
   };
 
-  programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh; # fight me :p
+  programs.zsh = {
+    enable = true;
+    ohMyZsh = {
+      enable = true;
+      plugins = [ ];
+      theme = "risto";
+    };
+  };
 
-  programs.bash.shellAliases = {
+  programs.zsh.shellAliases = {
     ".." = "cd ..";
     use = "nix-shell -p";
     ll = "ls -l";
     la = "ls -la";
+    ip = "ip -c";
   };
 
   system.stateVersion = "21.05"; # Did you read the comment?
