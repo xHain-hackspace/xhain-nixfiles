@@ -13,7 +13,7 @@
 
   networking.interfaces.intern = {
     ipv4.addresses = [
-      { address = "192.168.42.0"; prefixLength = 23; }
+      { address = "192.168.42.1"; prefixLength = 23; }
     ];
     ipv6.addresses = [
       { address = "2a0f:5382:acab:1342::1"; prefixLength = 64; }
@@ -29,7 +29,7 @@
   };
   networking.interfaces.guest = {
     ipv4.addresses = [
-      { address = "192.168.12.0"; prefixLength = 23; }
+      { address = "192.168.12.1"; prefixLength = 23; }
     ];
     ipv6.addresses = [
       { address = "2a0f:5382:acab:1312::1"; prefixLength = 64; }
