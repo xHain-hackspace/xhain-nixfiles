@@ -34,6 +34,9 @@
     EDITOR = "vim"; # fight me :-)
   };
 
+  programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh; # fight me :p
+
   programs.bash.shellAliases = {
     ".." = "cd ..";
     use = "nix-shell -p";
