@@ -25,6 +25,9 @@
   #  "2606:4700:4700::1111" "2001:4860:4860::8888" "2606:4700:4700::1001" "2001:4860:4860::8844"
   #  "1.1.1.1" "1.0.0.1"
   #];
+
+  services.lldpd.enable = true;
+
   nftables.enable = true;
 
   environment.systemPackages = with pkgs; [
