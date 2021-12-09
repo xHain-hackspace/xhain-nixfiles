@@ -7,6 +7,7 @@
     ./lan.nix
     ./dns.nix
     ../../common
+    ./pppoe.nix
   ];
 
   boot.loader.grub.enable = true;
