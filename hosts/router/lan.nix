@@ -7,9 +7,9 @@
     "40-guest".networkConfig.ConfigureWithoutCarrier = true;
   };
 
-  networking.vlans.intern  = { interface = "enp4s0"; id = 42; };
+  networking.vlans.intern = { interface = "enp4s0"; id = 42; };
   networking.vlans.hosting = { interface = "enp4s0"; id = 37; };
-  networking.vlans.guest   = { interface = "enp4s0"; id = 12; };
+  networking.vlans.guest = { interface = "enp4s0"; id = 12; };
 
   networking.interfaces.intern = {
     ipv4.addresses = [
@@ -82,7 +82,7 @@
         key "rndc-key";
       }
       subnet 192.168.42.0 netmask 255.255.254.0 {
-        range 192.168.42.20 192.168.43.254;
+        range 192.168.42.30 192.168.43.254;
         option routers 192.168.42.1;
         option domain-name-servers 192.168.42.1;
         option domain-search "lan.xhain.space.";
@@ -106,37 +106,46 @@
         interface guest;
       }
     '';
-  };
-
-  nftables = let
-    mtuFix = ''
-      meta nfproto ipv6 tcp flags syn tcp option maxseg size 1305-65535 tcp option maxseg size set 1304
-      meta nfproto ipv4 tcp flags syn tcp option maxseg size 1325-65535 tcp option maxseg size set 1324
-    '';
-  in {
-    forwardPolicy = "accept";
-    extraInput = mtuFix + ''
-      iifname { intern, hosting, guest } icmpv6 type nd-router-solicit accept
-    '';
-    extraOutput = mtuFix;
-    extraForward = mtuFix + ''
-      ct state invalid drop
-      ct state established,related accept
-
-      oifname { intern, guest } icmpv6 type { packet-too-big, echo-request, echo-reply, mld-listener-query, mld-listener-report, mld-listener-done, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } accept
-      oifname { intern, guest } icmp type echo-request accept
-      oifname { intern, guest } drop
-    '';
-    extraConfig = ''
-      table ip nat {
-        chain postrouting {
-          type nat hook postrouting priority 100
-          # masquerade private IP addresses
-          iifname { intern, guest } snat to 45.158.40.192;
-        }
+    machines = [
+      {
+        hostName = "xdoor";
+        ipAddress = "192.168.42.5";
+        ethernetAddress = "dc:a6:32:04:f5:40";
       }
-    '';
+    ];
   };
+
+  nftables =
+    let
+      mtuFix = ''
+        meta nfproto ipv6 tcp flags syn tcp option maxseg size 1305-65535 tcp option maxseg size set 1304
+        meta nfproto ipv4 tcp flags syn tcp option maxseg size 1325-65535 tcp option maxseg size set 1324
+      '';
+    in
+    {
+      forwardPolicy = "accept";
+      extraInput = mtuFix + ''
+        iifname { intern, hosting, guest } icmpv6 type nd-router-solicit accept
+      '';
+      extraOutput = mtuFix;
+      extraForward = mtuFix + ''
+        ct state invalid drop
+        ct state established,related accept
+
+        oifname { intern, guest } icmpv6 type { packet-too-big, echo-request, echo-reply, mld-listener-query, mld-listener-report, mld-listener-done, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } accept
+        oifname { intern, guest } icmp type echo-request accept
+        oifname { intern, guest } drop
+      '';
+      extraConfig = ''
+        table ip nat {
+          chain postrouting {
+            type nat hook postrouting priority 100
+            # masquerade private IP addresses
+            iifname { intern, guest } snat to 45.158.40.192;
+          }
+        }
+      '';
+    };
 
   boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = true;
   boot.kernel.sysctl."net.ipv4.conf.all.forwarding" = true;
