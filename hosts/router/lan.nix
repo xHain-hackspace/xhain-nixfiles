@@ -131,14 +131,17 @@
         ddns-domainname "lan.c3voc.de.";
         interface voc;
       }
-    '';
-    machines = [
-      {
-        hostName = "xdoor";
-        ipAddress = "192.168.42.5";
-        ethernetAddress = "dc:a6:32:04:f5:40";
+      host nas {
+        hardware ethernet 6c:bf:b5:00:61:fc;
+        fixed-address 192.168.42.2;
+        ddns-hostname "nas";
       }
-    ];
+      host xdoor {
+        hardware ethernet dc:a6:32:04:f5:40;
+        fixed-address 192.168.42.5;
+        ddns-hostname "xdoor";
+      }
+    '';
   };
 
   nftables =

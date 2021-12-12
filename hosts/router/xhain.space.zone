@@ -1,15 +1,27 @@
 $TTL 3600
-@               IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021112804 7200 900 1209600 86400
-                IN      NS         ns1.xhain.space.
-		IN      A          45.158.40.192
-                IN      AAAA       2a0f:5382:acab:1300::1
-		IN	LOC	   52 30 46.043 N 13 26 59.214 E 41m 10m 100m 10m
+@                     IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021121201 7200 900 1209600 86400
+                      IN      NS         ns1.xhain.space.
+                      IN      A          45.158.40.192
+                      IN      AAAA       2a0f:5382:acab:1300::1
+                      IN      LOC        52 30 46.043 N 13 26 59.214 E 41m 10m 100m 10m
 
-router          IN      A          45.158.40.192
-                IN      AAAA       2a0f:5382:acab:1300::1
-ns1             IN      A          45.158.40.192
-                IN      AAAA       2a0f:5382:acab:1300::1
+router                IN      A          45.158.40.192
+                      IN      AAAA       2a0f:5382:acab:1300::1
+ns1                   IN      A          45.158.40.192
+                      IN      AAAA       2a0f:5382:acab:1300::1
 
-lan             IN      NS         ns1.xhain.space.
-hosting         IN      NS         ns1.xhain.space.
-guest           IN      NS         ns1.xhain.space.
+lan                   IN      NS         ns1.xhain.space.
+hosting               IN      NS         ns1.xhain.space.
+guest                 IN      NS         ns1.xhain.space.
+
+sw-3dlap              IN      A          192.168.42.10
+sw-keller             IN      A          192.168.42.11
+sw-tuer               IN      A          192.168.42.12
+sw-maschinenraum      IN      A          192.168.42.13
+sw-main               IN      A          192.168.42.14
+
+wifi                  IN      A          192.168.42.20
+ap-tuer               IN      A          192.168.42.21
+ap-baumhaus           IN      A          192.168.42.22
+ap-maschinenraum      IN      A          192.168.42.23
+ap-keller             IN      A          192.168.42.24
