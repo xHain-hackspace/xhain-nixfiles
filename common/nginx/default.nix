@@ -19,7 +19,10 @@
       extraConfig = ''
         satisfy  any;
         allow ::1/128;
+        allow 2a0f:5382:acab:1300::/56;
         allow 127.0.0.1/32;
+        allow 192.168.12.0/23;
+        allow 192.168.42.0/23;
         allow 40.158.40.192/32;
         deny all;
       '';

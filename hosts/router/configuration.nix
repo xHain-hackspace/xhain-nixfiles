@@ -6,6 +6,7 @@
     ./wireguard.nix
     ./lan.nix
     ./dns.nix
+    ./nginx.nix
     ../../common
     ./pppoe.nix
   ];

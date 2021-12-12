@@ -36,16 +36,61 @@ in {
         routingPolicyRules = [
           {
             routingPolicyRuleConfig = {
-              Table = port;
-              From = "45.158.40.192/26";
+              Table = "main";
+              SuppressPrefixLength = 0;
               Priority = 1000;
+              Family = "both";
             };
           }
           {
             routingPolicyRuleConfig = {
-              Table = port;
+              FirewallMark = port;
+              Table = "main";
+              Priority = 1100;
+              Family = "both";
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              FirewallMark = port;
+              Type = "unreachable";
+              Priority = 1200;
+              Family = "both";
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              From = "192.168.12.0/23";
+              Table = 51820;
+              Priority = 1300;
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              From = "192.168.42.0/23";
+              Table = 51820;
+              Priority = 1300;
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              From = "45.158.40.192/26";
+              Table = 51820;
+              Priority = 1400;
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
               From = "2a0f:5382:acab:1300::/56";
-              Priority = 1000;
+              Table = 51820;
+              Priority = 1400;
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
+              Table = "main";
+              Priority = 1500;
+              Family = "both";
             };
           }
         ];
