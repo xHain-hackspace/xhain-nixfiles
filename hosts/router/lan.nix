@@ -104,6 +104,7 @@
         option routers 192.168.42.1;
         option domain-name-servers 192.168.42.1;
         option domain-search "lan.xhain.space.";
+        option domain-name "lan.xhain.space.";
         ddns-domainname "lan.xhain.space.";
         interface intern;
       }
@@ -112,6 +113,7 @@
         option routers 45.158.40.193;
         option domain-name-servers 45.158.40.193;
         option domain-search "hosting.xhain.space.";
+        option domain-name "hosting.xhain.space.";
         ddns-domainname "hosting.xhain.space.";
         interface hosting;
       }
@@ -120,6 +122,7 @@
         option routers 192.168.12.1;
         option domain-name-servers 192.168.12.1;
         option domain-search "guest.xhain.space.";
+        option domain-name "guest.xhain.space.";
         ddns-domainname "guest.xhain.space.";
         interface guest;
       }
@@ -128,6 +131,7 @@
         option routers 10.73.243.1;
         option domain-name-servers 10.73.243.1;
         option domain-search "lan.c3voc.de.";
+        option domain-name "lan.c3voc.de.";
         ddns-domainname "lan.c3voc.de.";
         interface voc;
       }
