@@ -67,6 +67,13 @@ in {
           }
           {
             routingPolicyRuleConfig = {
+              From = "10.73.243.0/24";
+              Table = 51820;
+              Priority = 1300;
+            };
+          }
+          {
+            routingPolicyRuleConfig = {
               From = "192.168.42.0/23";
               Table = 51820;
               Priority = 1300;

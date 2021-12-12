@@ -5,11 +5,13 @@
     "40-intern".networkConfig.ConfigureWithoutCarrier = true;
     "40-hosting".networkConfig.ConfigureWithoutCarrier = true;
     "40-guest".networkConfig.ConfigureWithoutCarrier = true;
+    "40-voc".networkConfig.ConfigureWithoutCarrier = true;
   };
 
-  networking.vlans.intern = { interface = "enp4s0"; id = 42; };
+  networking.vlans.intern  = { interface = "enp4s0"; id = 42; };
   networking.vlans.hosting = { interface = "enp4s0"; id = 37; };
-  networking.vlans.guest = { interface = "enp4s0"; id = 12; };
+  networking.vlans.guest   = { interface = "enp4s0"; id = 12; };
+  networking.vlans.voc     = { interface = "enp4s0"; id = 23; };
 
   networking.interfaces.intern = {
     ipv4.addresses = [
@@ -36,6 +38,15 @@
     ];
   };
 
+  networking.interfaces.voc = {
+    ipv4.addresses = [
+      { address = "10.73.243.1"; prefixLength = 24; }
+    ];
+    ipv6.addresses = [
+      { address = "2a0f:5382:acab:1323::1"; prefixLength = 64; }
+    ];
+  };
+
   services.radvd = {
     enable = true;
     config = ''
@@ -59,6 +70,13 @@
           AdvRouterAddr on;
         };
         RDNSS 2a0f:5382:acab:1312::1 {};
+      };
+      interface voc {
+        AdvSendAdvert on;
+        prefix 2a0f:5382:acab:1323::/64 {
+          AdvRouterAddr on;
+        };
+        RDNSS 2a0f:5382:acab:1323::1 {};
       };
     '';
   };
@@ -105,6 +123,14 @@
         ddns-domainname "guest.xhain.space.";
         interface guest;
       }
+      subnet 10.73.243.0 netmask 255.255.255.0 {
+        range 10.73.243.20 10.73.243.254;
+        option routers 10.73.243.1;
+        option domain-name-servers 10.73.243.1;
+        option domain-search "lan.c3voc.de.";
+        ddns-domainname "lan.c3voc.de.";
+        interface voc;
+      }
     '';
     machines = [
       {
@@ -125,25 +151,25 @@
     {
       forwardPolicy = "accept";
       extraInput = mtuFix + ''
-        iifname { intern, hosting, guest } icmpv6 type nd-router-solicit accept
+        iifname { intern, hosting, guest, voc } icmpv6 type nd-router-solicit accept
       '';
       extraOutput = mtuFix;
       extraForward = mtuFix + ''
         ct state invalid drop
         ct state established,related accept
 
-        oifname { intern, guest } icmpv6 type { packet-too-big, echo-request, echo-reply, mld-listener-query, mld-listener-report, mld-listener-done, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } accept
-        oifname { intern, guest } icmp type echo-request accept
-        oifname { intern, guest } drop
-      '';
-      extraConfig = ''
-        table ip nat {
-          chain postrouting {
-            type nat hook postrouting priority 100
-            # masquerade private IP addresses
-            iifname { intern, guest } snat to 45.158.40.192;
-          }
+      oifname { intern, guest, voc } icmpv6 type { packet-too-big, echo-request, echo-reply, mld-listener-query, mld-listener-report, mld-listener-done, nd-router-advert, nd-neighbor-solicit, nd-neighbor-advert } accept
+      oifname { intern, guest, voc } icmp type echo-request accept
+      oifname { intern, guest, voc } drop
+    '';
+    extraConfig = ''
+      table ip nat {
+        chain postrouting {
+          type nat hook postrouting priority 100
+          # masquerade private IP addresses
+          iifname { intern, guest, voc } snat to 45.158.40.192;
         }
+      }
       '';
     };
 
