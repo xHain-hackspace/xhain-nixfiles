@@ -14,8 +14,6 @@ lan                   IN      NS         ns1.xhain.space.
 hosting               IN      NS         ns1.xhain.space.
 guest                 IN      NS         ns1.xhain.space.
 
-leases                IN      NS         192.168.42.1
-
 sw-3dlap              IN      A          192.168.42.10
 sw-keller             IN      A          192.168.42.11
 sw-tuer               IN      A          192.168.42.12
