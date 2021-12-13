@@ -14,6 +14,8 @@
     locations."/prometheus/".proxyPass = "http://${addr}:${port}/";
   };
 
+  secrets.homeassistant_token.owner = "prometheus";
+
   services.prometheus = {
     enable = true;
     extraFlags = [ "--web.external-url='https://router.xhain.space/prometheus/'" "--web.route-prefix='/'" ];
@@ -113,6 +115,17 @@
             "xdoor.lan.xhain.space"
             "45.158.40.1"
             "x-hain.de"
+          ];
+        }];
+      }
+      {
+        job_name = "homeassistant";
+        scheme = "http";
+        metrics_path = "/api/prometheus";
+        bearer_token_file = config.secrets.homeassistant_token.path;
+        static_configs = [{
+          targets = [
+            "automation.lan.xhain.space"
           ];
         }];
       }
