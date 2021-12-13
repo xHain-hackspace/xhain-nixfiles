@@ -111,6 +111,8 @@
             "sw-keller.xhain.space"
             "sw-maschinenraum.xhain.space"
             "xdoor.lan.xhain.space"
+            "45.158.40.1"
+            "x-hain.de"
           ];
         }];
       }
