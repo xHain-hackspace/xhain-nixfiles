@@ -83,7 +83,7 @@
         metrics_path = "/snmp-exporter/snmp";
         params = { module = [ "aruba" ]; };
         relabel_configs = rewriteToLocal;
-        static_configs = [{ targets = [ "wifi.lan.xhain.space"] ; }];
+        static_configs = [{ targets = [ "wifi.xhain.space"] ; }];
       }
       {
         job_name = "switches";
@@ -93,9 +93,9 @@
         relabel_configs = rewriteToLocal;
         static_configs = [{
           targets = [
-            "sw-tuer.lan.xhain.space"
-            "sw-keller.lan.xhain.space"
-            "sw-maschinenraum.lan.xhain.space"
+            "sw-tuer.xhain.space"
+            "sw-keller.xhain.space"
+            "sw-maschinenraum.xhain.space"
           ];
         }];
       }
@@ -107,9 +107,9 @@
         relabel_configs = rewriteToLocal;
         static_configs = [{
           targets = [
-            "sw-tuer.lan.xhain.space"
-            "sw-keller.lan.xhain.space"
-            "sw-maschinenraum.lan.xhain.space"
+            "sw-tuer.xhain.space"
+            "sw-keller.xhain.space"
+            "sw-maschinenraum.xhain.space"
             "xdoor.lan.xhain.space"
           ];
         }];
