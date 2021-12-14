@@ -97,6 +97,7 @@
           targets = [
             "sw-tuer.xhain.space"
             "sw-keller.xhain.space"
+            "sw-3dlab.xhain.space"
             "sw-maschinenraum.xhain.space"
           ];
         }];
@@ -111,6 +112,7 @@
           targets = [
             "sw-tuer.xhain.space"
             "sw-keller.xhain.space"
+            "sw-3dlab.xhain.space"
             "sw-maschinenraum.xhain.space"
             "xdoor.lan.xhain.space"
             "45.158.40.1"
