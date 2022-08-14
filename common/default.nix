@@ -9,6 +9,10 @@
     ../modules
   ];
 
+  systemd.services.dhcpd4.serviceConfig.User = lib.mkForce "named";
+
+  nixpkgs.config.packageOverrides = import ../pkgs { inherit pkgs lib; };
+
   boot.kernelPackages = lib.mkOverride 1001 pkgs.linuxPackages_latest;
 
   services.openssh.enable = true;
