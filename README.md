@@ -3,7 +3,16 @@
 ### How to deploy the router:
 
 ```
-nixos-rebuild switch --target-host router.xhain.space --use-remote-sudo -I nixpkgs=channel:nixos-unstable -I nixos-config=hosts/xhain/configuration.nix
+nix build -f . deploy.router
+./result switch
+```
+
+### Install updates
+
+```
+niv update
+nix build -f . deploy.router
+./result switch
 ```
 
 ### ToDo
