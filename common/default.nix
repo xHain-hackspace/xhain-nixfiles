@@ -17,13 +17,13 @@
 
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = false;
-  services.openssh.challengeResponseAuthentication = false;
+  services.openssh.kbdInteractiveAuthentication = false;
   services.openssh.permitRootLogin = lib.mkDefault "no";
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
   security.sudo.wheelNeedsPassword = false;
 
   nix.gc.automatic = lib.mkDefault true;
-  nix.trustedUsers = [ "root" "@wheel" ];
+  nix.settings.trusted-users = [ "root" "@wheel" ];
 
   environment.systemPackages = with pkgs; [
     htop
