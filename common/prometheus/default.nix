@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./iperf3-exporter.nix
     ./node.nix
     ./wireguard.nix
     ./blackbox.nix
@@ -18,6 +19,7 @@
 
   services.prometheus = {
     enable = true;
+    checkConfig = "syntax-only";
     extraFlags = [ "--web.external-url='https://router.xhain.space/prometheus/'" "--web.route-prefix='/'" ];
     listenAddress = "127.0.0.1";
     globalConfig.scrape_interval = "15s";
@@ -44,6 +46,32 @@
       ];
     in
     [
+      {
+        job_name = "iperf3-meta";
+        scheme = "https";
+        metrics_path = "/iperf3-exporter/metrics";
+        relabel_configs = removePort;
+        static_configs = [{ targets = [ "${config.networking.hostName + "." + config.networking.domain}"]; }];
+      }
+      {
+        job_name = "iperf3";
+        scheme = "https";
+        metrics_path = "/iperf3-exporter/probe";
+        relabel_configs = rewriteToLocal;
+        static_configs = [{ targets = [ "speedtest.wobcom.de"]; }];
+        scrape_interval = "600s";
+        scrape_timeout = "30s";
+      }
+      {
+        job_name = "iperf3-download";
+        scheme = "https";
+        params = { "reverse" = [ "true" ]; };
+        metrics_path = "/iperf3-exporter/probe";
+        relabel_configs = rewriteToLocal;
+        static_configs = [{ targets = [ "speedtest.wobcom.de"]; }];
+        scrape_interval = "600s";
+        scrape_timeout = "30s";
+      }
       {
         job_name = "node";
         scheme = "https";

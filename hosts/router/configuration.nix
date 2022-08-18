@@ -11,9 +11,10 @@
     ./pppoe.nix
   ];
 
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  boot.loader.grub.device = "/dev/sda";
+  boot.loader.systemd-boot.enable = true;
+  # boot.loader.grub.enable = true;
+  # boot.loader.grub.version = 2;
+  # boot.loader.grub.device = "/dev/sda";
   boot.kernelParams = [ "console=ttyS0,115200n8" "console=tty0" "panic=1" "boot.panic_on_fail" ];
 
   networking.hostName = "router";
