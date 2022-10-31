@@ -5,7 +5,13 @@ let
 in {
   services.nginx.additionalModules = with pkgs.nginxModules; [
     lua
-  ];  
+  ];
+
+  fileSystems."/var/lib/dhcp" = {
+    device = "/var/lib/dhcpd4";
+    options = ["bind" "ro" "X-mount.mkdir" "user" "noauto"];
+    fsType = "none";
+  };
 
   services.nginx.virtualHosts.${config.networking.fqdn}.locations."/leases" = {
     extraConfig = ''
