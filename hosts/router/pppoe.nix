@@ -29,7 +29,7 @@
   };
 
   services.pppd = {
-    enable = true;
+    enable = false;
     peers = {
       dsl = {
         config = 
