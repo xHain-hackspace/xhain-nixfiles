@@ -16,9 +16,12 @@
   boot.kernelPackages = lib.mkOverride 1001 pkgs.linuxPackages_latest;
 
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = false;
-  services.openssh.kbdInteractiveAuthentication = false;
-  services.openssh.permitRootLogin = lib.mkDefault "no";
+  services.openssh.settings = {
+    PasswordAuthentication = false;
+    KbdInteractiveAuthentication = false;
+    PermitRootLogin = lib.mkDefault "no";
+  };
+
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
   security.sudo.wheelNeedsPassword = false;
 
