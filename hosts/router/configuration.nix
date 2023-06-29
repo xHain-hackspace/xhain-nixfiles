@@ -29,8 +29,8 @@
   #];
 
   services.lldpd.enable = true;
-
   nftables.enable = true;
+  services.iperf3-exporter.enable = false;
 
   environment.systemPackages = with pkgs; [
     wireguard-tools
