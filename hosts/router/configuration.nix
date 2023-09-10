@@ -8,7 +8,6 @@
     ./dns.nix
     ./nginx.nix
     ../../common
-    ./pppoe.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
