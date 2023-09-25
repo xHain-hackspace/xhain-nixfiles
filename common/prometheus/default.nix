@@ -142,10 +142,10 @@
             "sw-keller.xhain.space"
             "sw-3dlab.xhain.space"
             "sw-maschinenraum.xhain.space"
-            "ap-tuer",
-            "ap-baumhaus",
-            "ap-maschinenraum",
-            "ap-keller",
+            "ap-tuer"
+            "ap-baumhaus"
+            "ap-maschinenraum"
+            "ap-keller"
             "xdoor.lan.xhain.space"
             "45.158.40.1"
             "x-hain.de"
