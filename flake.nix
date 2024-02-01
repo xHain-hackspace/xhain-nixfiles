@@ -33,6 +33,7 @@
           sops-nix.nixosModules.sops
         ];
         deployment.targetHost = lib.mkDefault "${name}.xhain.space";
+        deployment.targetUser = null;
       };
 
       router = {...}: {
