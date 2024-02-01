@@ -1,6 +1,9 @@
 {
   "nodes": {
-    "nixpkgs": {
+    "flakelight": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
       "locked": {
         "lastModified": 1709428628,
         "narHash": "sha256-//ZCCnpVai/ShtO2vPjh3AWgo8riXCaret6V9s7Hew4=",
@@ -10,10 +13,24 @@
         "type": "github"
       },
       "original": {
+        "owner": "nix-community",
+        "repo": "flakelight",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1706191920,
+        "narHash": "sha256-eLihrZAPZX0R6RyM5fYAWeKVNuQPYjAkCUBr+JNvtdE=",
         "owner": "NixOS",
         "ref": "nixos-23.11-small",
         "repo": "nixpkgs",
         "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-unstable",
+        "type": "indirect"
       }
     },
     "nixpkgs-stable": {
@@ -32,9 +49,26 @@
         "type": "github"
       }
     },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1688417265,
+        "narHash": "sha256-OddjGM32Vk/GLh1OQQYPePt2Z2j/fwNUqb4X6aDPkxQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "77d0269595488cf2fae06c5a8c3f63ebc94e7f13",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "77d0269595488cf2fae06c5a8c3f63ebc94e7f13",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
+        "flakelight": "flakelight",
+        "nixpkgs": "nixpkgs_2",
         "sops-nix": "sops-nix"
       }
     },

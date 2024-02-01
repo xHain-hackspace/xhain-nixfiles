@@ -2,17 +2,19 @@
   inputs = {
     #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11-small";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    flakelight.url = "github:nix-community/flakelight";
   };
-
-  outputs = { nixpkgs, ... } @inputs: {
-    devShells.default = nixpkgs.mkShell {
-      packages = [
-        nixpkgs.alejandra
-        nixpkgs.git
-        nixpkgs.colmena
+  outputs = { nixpkgs, sops-nix, flakelight, ... }:
+    flakelight ./. {
+      devShell.packages = pkgs: [
+        pkgs.alejandra
+        pkgs.git
+        pkgs.colmena
       ];
       name = "dots";
       DIRENV_LOG_FORMAT = "";
