@@ -1,5 +1,5 @@
 $TTL 3600
-@                     IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2023100600 7200 900 1209600 86400
+@                     IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2024020300 7200 900 1209600 86400
                       IN      NS         ns1.xhain.space.
                       IN      A          45.158.40.192
                       IN      AAAA       2a0f:5382:acab:1300::1
@@ -25,6 +25,7 @@ sw-keller             IN      A          192.168.42.11
 sw-tuer               IN      A          192.168.42.12
 sw-maschinenraum      IN      A          192.168.42.13
 sw-main               IN      A          192.168.42.14
+sw-core               IN      A          192.168.42.15
 
 wifi-outdoor          IN      A          192.168.42.19
 wifi                  IN      A          192.168.42.20
