@@ -123,6 +123,8 @@
         relabel_configs = rewriteToLocal;
         static_configs = [{
           targets = [
+            "sw-core.xhain.space"
+            "sw-main.xhain.space"
             "sw-tuer.xhain.space"
             "sw-keller.xhain.space"
             "sw-3dlab.xhain.space"
@@ -138,6 +140,8 @@
         relabel_configs = rewriteToLocal;
         static_configs = [{
           targets = [
+            "sw-core.xhain.space"
+            "sw-main.xhain.space"
             "sw-tuer.xhain.space"
             "sw-keller.xhain.space"
             "sw-3dlab.xhain.space"
