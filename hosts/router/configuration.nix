@@ -6,7 +6,6 @@
     ./wireguard.nix
     ./lan.nix
     ./dns.nix
-    ./nginx.nix
     ./dhcp.nix
     ../../common
   ];

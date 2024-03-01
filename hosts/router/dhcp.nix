@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   subnets = {
@@ -59,11 +59,13 @@ let
   mkKeaDdnsDomains = name: attrs:
     ''{
         "dns-servers": [{"ip-address": "127.0.0.1"}],
-        "key-name": "ddns",
+        "key-name": "rndc-key",
         "name": "${attrs.ddns_domain}"
       }'';
 in
 {
+  secrets.kea-ddns-key.owner = "kea";
+
   services.kea = {
     dhcp4 = {
       enable = true;
@@ -122,7 +124,7 @@ in
               ]
             },
             "tsig-keys": [
-              <?include "/etc/bind/rndc.key"?>
+              <?include "${config.secrets.kea-ddns-key.path}"?>
             ],
             "loggers": [
               {

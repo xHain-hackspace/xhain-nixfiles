@@ -20,6 +20,7 @@ let
     file = "/var/lib/bind/${name}zone";
     extraConfig = ''
       allow-update { key "rndc-key"; };
+      journal "/var/run/named/${name}.zone.jnl";
     '';
   };
 in
