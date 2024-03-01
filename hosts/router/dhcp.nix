@@ -97,18 +97,18 @@ in
 
         subnet4 = lib.mapAttrsToList mkKeaSubnet subnets;
 
-        loggers = [
-          {
-            name = "kea-dhcp4";
-            output_options = [
-              {
-                output = "stdout";
-              }
-            ];
-            severity = "DEBUG";
-            debuglevel = 0;
-          }
-        ];
+        # loggers = [
+        #   {
+        #     name = "kea-dhcp4";
+        #     output_options = [
+        #       {
+        #         output = "stdout";
+        #       }
+        #     ];
+        #     severity = "DEBUG";
+        #     debuglevel = 0;
+        #   }
+        # ];
       };
     };
 
@@ -126,19 +126,19 @@ in
             "tsig-keys": [
               <?include "${config.secrets.kea-ddns-key.path}"?>
             ],
-            "loggers": [
-              {
-                "name": "kea-dhcp-ddns",
-                "output_options": [
-                    {
-                        "output": "stdout",
-                        "pattern": "%-5p %m\n"
-                    }
-                ],
-                "severity": "DEBUG",
-                "debuglevel": 0
-              }
-            ]
+            # "loggers": [
+            #   {
+            #     "name": "kea-dhcp-ddns",
+            #     "output_options": [
+            #         {
+            #             "output": "stdout",
+            #             "pattern": "%-5p %m\n"
+            #         }
+            #     ],
+            #     "severity": "DEBUG",
+            #     "debuglevel": 0
+            #   }
+            # ]
           }
         }
       '';
