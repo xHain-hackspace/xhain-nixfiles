@@ -22,7 +22,8 @@ let
       allow-update { key "rndc-key"; };
     '';
   };
-in {
+in
+{
   systemd.services.bind.preStart = ''
     mkdir -p /var/lib/bind
     chown named /var/lib/bind

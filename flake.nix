@@ -1,13 +1,9 @@
 {
   inputs = {
     #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
-    nixpkgs.url = "github:NixOS/nixpkgs/77d0269595488cf2fae06c5a8c3f63ebc94e7f13";
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11-small";
   };
-  outputs = { nixpkgs, sops-nix, ... }: {
+  outputs = { nixpkgs, ... }: {
     devShells.default = nixpkgs.mkShell {
       packages = [
         nixpkgs.alejandra
@@ -30,14 +26,12 @@
           (./. + "/hosts/${name}/configuration.nix")
           ./modules
           #./common
-          sops-nix.nixosModules.sops
         ];
         deployment.targetHost = lib.mkDefault "${name}.xhain.space";
         deployment.targetUser = null;
       };
 
-      router = {...}: {
-      };
+      router = { ... }: { };
     };
   };
 }

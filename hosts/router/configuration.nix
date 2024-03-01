@@ -7,6 +7,7 @@
     ./lan.nix
     ./dns.nix
     ./nginx.nix
+    ./dhcp.nix
     ../../common
   ];
 
@@ -22,6 +23,7 @@
   networking.interfaces.enp1s0.useDHCP = true;
   networking.useNetworkd = true;
   services.resolved.dnssec = "false";
+
   #networking.nameservers = [
   #  "2606:4700:4700::1111" "2001:4860:4860::8888" "2606:4700:4700::1001" "2001:4860:4860::8844"
   #  "1.1.1.1" "1.0.0.1"
