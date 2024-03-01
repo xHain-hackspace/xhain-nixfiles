@@ -9,7 +9,6 @@
     ../modules
   ];
 
-  systemd.services.dhcpd4.serviceConfig.User = lib.mkForce "named";
 
   nixpkgs.config.packageOverrides = import ../pkgs { inherit pkgs lib; };
 
