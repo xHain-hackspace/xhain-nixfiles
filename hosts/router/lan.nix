@@ -8,10 +8,10 @@
     "40-voc".networkConfig.ConfigureWithoutCarrier = true;
   };
 
-  networking.vlans.intern  = { interface = "enp4s0"; id = 42; };
-  networking.vlans.hosting = { interface = "enp4s0"; id = 37; };
-  networking.vlans.guest   = { interface = "enp4s0"; id = 12; };
-  networking.vlans.voc     = { interface = "enp4s0"; id = 23; };
+  networking.vlans.intern  = { interface = "enp6s0f4"; id = 42; };
+  networking.vlans.hosting = { interface = "enp6s0f4"; id = 37; };
+  networking.vlans.guest   = { interface = "enp6s0f4"; id = 12; };
+  networking.vlans.voc     = { interface = "enp6s0f4"; id = 23; };
 
   networking.interfaces.intern = {
     ipv4.addresses = [
