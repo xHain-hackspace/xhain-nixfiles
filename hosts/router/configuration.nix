@@ -37,6 +37,9 @@
     wireguard-tools
     tcpdump
     nload
+    ripgrep
+    nmap
+    dig
   ];
   programs.mtr.enable = true;
 
