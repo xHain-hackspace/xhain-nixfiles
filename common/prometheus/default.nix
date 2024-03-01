@@ -125,7 +125,7 @@
           targets = [
             "sw-core.xhain.space"
             "sw-main.xhain.space"
-            "sw-tuer.xhain.space"
+            "sw-rack.xhain.space"
             "sw-keller.xhain.space"
             "sw-3dlab.xhain.space"
             "sw-maschinenraum.xhain.space"
@@ -142,7 +142,7 @@
           targets = [
             "sw-core.xhain.space"
             "sw-main.xhain.space"
-            "sw-tuer.xhain.space"
+            "sw-rack.xhain.space"
             "sw-keller.xhain.space"
             "sw-3dlab.xhain.space"
             "sw-maschinenraum.xhain.space"
