@@ -13,12 +13,6 @@
   users.groups.samba = { };
 
   system.activationScripts.permissions = ''
-    chown root:samba /media/timemachine
-    chmod g+wx /media/timemachine
-
-    chown root:samba /media/timemachine_mary
-    chmod g+wx /media/timemachine_mary
-
     chown root:samba /media/storage
     chmod g+wx /media/storage
   '';
