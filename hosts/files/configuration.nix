@@ -33,7 +33,7 @@
       map to guest = Bad User
       passdb backend = tdbsam
       force group = samba
-
+    '';
     shares = {
       Storage = {
         comment = "Storage";
