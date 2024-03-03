@@ -39,8 +39,11 @@
         deployment.targetHost = "router.xhain.space";
       };
 
+      files = { ... }: {
+        deployment.targetHost = "files.xhain.space";
+      };
+
       nix-builder = { ... }: { };
-      files = { ... }: { };
     };
   };
 }
