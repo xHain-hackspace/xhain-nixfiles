@@ -5,8 +5,18 @@
     ../../modules/proxmox_server
   ];
 
-  networking.hostName = name;
+  networking = {
+    hostName = name;
+    domain = "xhain.space";
 
+    nameservers = [ "192.168.42.1" ];
+    defaultGateway = { address = "192.168.42.1"; interface = "eth0"; };
+
+    interfaces.eth0 = {
+      useDHCP = false;
+      ipv4.addresses = [{ address = "192.168.42.2"; prefixLength = 16; }];
+    };
+  };
   environment.systemPackages = with pkgs; [
   ];
 
