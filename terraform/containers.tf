@@ -103,3 +103,41 @@ resource "proxmox_lxc" "nix-builder" {
     nesting = true
   }
 }
+
+resource "proxmox_lxc" "files" {
+  target_node  = "pve"
+  hostname     = "files"
+  ostemplate   = "local:vztmpl/nixos-base.tar.xz"
+  unprivileged = true
+  cores        = 4
+  onboot       = true
+  start        = true
+  memory       = 2048
+  cmode        = "console"
+  ostype       = "nixos"
+
+  rootfs {
+    storage = "local-zfs"
+    size    = "30G"
+  }
+
+  mountpoint {
+    key     = "0"
+    slot    = 0
+    storage = "local-zfs"
+    mp      = "/media"
+    size    = "1024G"
+  }
+
+  network {
+    name     = "eth0"
+    bridge   = "vmbr0"
+    ip       = "dhcp"
+    ip6      = "dhcp"
+    firewall = true
+  }
+
+  features {
+    nesting = true
+  }
+}
