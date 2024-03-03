@@ -3,16 +3,13 @@
 ### How to deploy the router:
 
 ```
-nix build -f . deploy.router
-./result switch
+colmena apply --on router
 ```
 
 ### Install updates
 
 ```
-niv update
-nix build -f . deploy.router
-./result switch
+nix flake update
 ```
 
 ### ToDo

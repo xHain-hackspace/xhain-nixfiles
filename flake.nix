@@ -2,8 +2,12 @@
   inputs = {
     #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11-small";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { nixpkgs, ... }: {
+
+  outputs = { nixpkgs, ... } @inputs: {
     devShells.default = nixpkgs.mkShell {
       packages = [
         nixpkgs.alejandra
@@ -17,21 +21,25 @@
       meta = {
         nixpkgs = import nixpkgs {
           system = "x86_64-linux";
+          config = { allowUnfree = true; };
           overlays = [ (final: prev: import ./pkgs final prev) ];
         };
+        specialArgs = { inherit inputs; };
       };
 
       defaults = { config, lib, name, ... }: {
         imports = [
           (./. + "/hosts/${name}/configuration.nix")
-          ./modules
-          #./common
         ];
-        deployment.targetHost = lib.mkDefault "${name}.xhain.space";
+        deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
         deployment.targetUser = null;
       };
 
-      router = { ... }: { };
+      router = { ... }: {
+        deployment.targetHost = "router.xhain.space";
+      };
+
+      nix-builder = { ... }: { };
     };
   };
 }

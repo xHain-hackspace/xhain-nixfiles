@@ -2,12 +2,16 @@
 
 {
   imports = [
+    ../../modules/nftables
+    ../../modules/prometheus-iperf3-exporter
+    ../../modules/secrets
+    ./local_modules
     ./hardware-configuration.nix
     ./wireguard.nix
     ./lan.nix
     ./dns.nix
     ./dhcp.nix
-    ../../common
+    ./users.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

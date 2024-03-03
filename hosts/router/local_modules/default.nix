@@ -2,15 +2,12 @@
 
 {
   imports = [
-    ./users.nix
     ./nginx
     ./snmp
     ./prometheus
-    ../modules
   ];
 
-
-  nixpkgs.config.packageOverrides = import ../pkgs { inherit pkgs lib; };
+  nixpkgs.config.packageOverrides = import ../../../pkgs { inherit pkgs lib; };
 
   boot.kernelPackages = lib.mkOverride 1001 pkgs.linuxPackages_latest;
 
