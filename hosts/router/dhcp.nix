@@ -64,6 +64,12 @@ let
       }'';
 in
 {
+  users.users.kea = {
+    isSystemUser = true;
+    group = "kea";
+  };
+  users.groups.kea = { };
+
   secrets.kea-ddns-key.owner = "kea";
 
   services.kea = {
