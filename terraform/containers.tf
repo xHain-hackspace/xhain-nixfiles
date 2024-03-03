@@ -132,7 +132,7 @@ resource "proxmox_lxc" "files" {
   network {
     name     = "eth0"
     bridge   = "vmbr0"
-    ip       = "dhcp"
+    ip       = "192.168.42.2/24"
     ip6      = "dhcp"
     firewall = true
   }
