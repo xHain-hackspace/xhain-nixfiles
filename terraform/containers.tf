@@ -125,8 +125,8 @@ resource "proxmox_lxc" "files" {
     key     = "0"
     slot    = 0
     storage = "local-zfs"
-    mp      = "/media"
-    size    = "1024G"
+    mp      = "/media/storage"
+    size    = "1T"
   }
 
   network {
