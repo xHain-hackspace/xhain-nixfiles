@@ -4,7 +4,6 @@
   imports = [
     (modulesPath + "/virtualisation/proxmox-lxc.nix")
     inputs.sops-nix.nixosModules.sops
-    ./users.nix
   ];
 
   proxmoxLXC.manageHostName = lib.mkDefault true;

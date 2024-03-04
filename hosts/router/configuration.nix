@@ -5,13 +5,15 @@
     ../../modules/nftables
     ../../modules/prometheus-iperf3-exporter
     ../../modules/secrets
+    ../../modules/groups/admins.nix
+    ../../modules/users/fluepke.nix
+    ../../modules/users/yuka.nix
     ./local_modules
     ./hardware-configuration.nix
     ./wireguard.nix
     ./lan.nix
     ./dns.nix
     ./dhcp.nix
-    ./users.nix
   ];
 
   boot.loader.systemd-boot.enable = true;

@@ -3,6 +3,7 @@
 {
   imports = [
     ../../modules/proxmox_server
+    ../../modules/groups/admins.nix
   ];
 
   networking.hostName = name;
