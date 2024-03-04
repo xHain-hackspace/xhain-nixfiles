@@ -20,6 +20,17 @@
   environment.systemPackages = with pkgs; [
   ];
 
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  services.nginx = {
+    enable = true;
+    virtualHosts."files.xhain.space" = {
+      root = "/media/storage";
+      extraConfig = ''
+      autoindex on;
+      '';
+    };
+  };
+
   users.groups.samba = { };
 
   system.activationScripts.permissions = ''
