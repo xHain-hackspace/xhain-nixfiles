@@ -14,7 +14,7 @@
 
     interfaces.eth0 = {
       useDHCP = false;
-      ipv4.addresses = [{ address = "192.168.42.2"; prefixLength = 16; }];
+      ipv4.addresses = [{ address = "192.168.42.2"; prefixLength = 23; }];
     };
   };
   environment.systemPackages = with pkgs; [
