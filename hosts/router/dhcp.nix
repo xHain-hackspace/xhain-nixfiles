@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 let
   subnets = {
@@ -62,8 +62,13 @@ let
         "key-name": "rndc-key",
         "name": "${attrs.ddns_domain}"
       }'';
+  controlSocket = "/run/kea/dhcp4.sock";
 in
 {
+  imports = [
+    inputs.kea-lease-viewer.nixosModules.default
+  ];
+
   users.users.kea = {
     isSystemUser = true;
     group = "kea";
@@ -102,6 +107,18 @@ in
         hostname-char-replacement = "-";
 
         subnet4 = lib.mapAttrsToList mkKeaSubnet subnets;
+
+        control-socket = {
+          socket-type = "unix";
+          socket-name = controlSocket;
+        };
+
+        hooks-libraries = [
+          {
+            library = "/var/run/current-system/sw/lib/kea/hooks/libdhcp_lease_cmds.so";
+            parameters = {};
+          }
+        ];
 
         # loggers = [
         #   {
@@ -148,6 +165,32 @@ in
           }
         }
       '';
+    };
+  };
+
+  systemd.services.kea-socket-permissions = {
+    wantedBy = ["multi-user.target"];
+    after = ["kea-dhcp4-server.service"];
+    wants = ["kea-dhcp4-server.service"];
+    preStart = ''
+      /bin/sh -c 'while [ ! -e ${controlSocket} ]; do echo " Waiting for ${controlSocket} "; sleep 1; done'
+    '';
+    script = ''
+      chown -v kea-lease-viewer:kea ${controlSocket}
+      chmod -v 660 ${controlSocket}
+      ln -f -v ${controlSocket} /run/kea-dhcp4.sock
+    '';
+  };
+
+  services.kea-lease-viewer = {
+    enable = true;
+    keaSocketPath = "/run/kea-dhcp4.sock";
+  };
+
+   services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} =  {
+    locations."/leases" = {
+      recommendedProxySettings = true;
+      proxyPass = "http://${config.services.kea-lease-viewer.listenAddress}:${toString config.services.kea-lease-viewer.port}/";
     };
   };
 }

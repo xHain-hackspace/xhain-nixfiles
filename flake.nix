@@ -5,6 +5,9 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    kea-lease-viewer.url = "github:reimerei/kea-lease-viewer/main";
+    kea-lease-viewer.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = { nixpkgs, ... } @inputs: {

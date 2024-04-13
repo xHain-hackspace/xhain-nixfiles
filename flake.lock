@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "kea-lease-viewer": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1710786046,
+        "narHash": "sha256-XUbUAsFDLMTkfN8gXY7UL0V2TUlP1qsrGh/qH9FHxhA=",
+        "owner": "reimerei",
+        "repo": "kea-lease-viewer",
+        "rev": "607ed2fc9f90ed9acd65aaddccfdb8bb315d4fb8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "reimerei",
+        "ref": "main",
+        "repo": "kea-lease-viewer",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1709428628,
@@ -34,6 +55,7 @@
     },
     "root": {
       "inputs": {
+        "kea-lease-viewer": "kea-lease-viewer",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix"
       }
