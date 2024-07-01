@@ -16,9 +16,9 @@
     PasswordAuthentication = false;
     KbdInteractiveAuthentication = false;
     PermitRootLogin = lib.mkDefault "no";
-      # CVE-2024-6387
-      # https://github.com/NixOS/nixpkgs/pull/323753#issuecomment-2199762128
-      LoginGraceTime = 0;
+    # CVE-2024-6387
+    # https://github.com/NixOS/nixpkgs/pull/323753#issuecomment-2199762128
+    LoginGraceTime = 0;
   };
 
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
