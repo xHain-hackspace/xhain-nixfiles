@@ -10,17 +10,21 @@
       url = "github:reimerei/kea-lease-viewer/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     flakelight.url = "github:nix-community/flakelight";
   };
-  outputs = { nixpkgs, sops-nix, flakelight, ... }:
+  outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }:
     flakelight ./. {
       inputs.nixpkgs = nixpkgs;
-      devShell.packages = pkgs: [
-        pkgs.alejandra
-        pkgs.git
-        pkgs.colmena
-      ];
+      devShell = {
+        packages = pkgs: [
+          pkgs.alejandra
+          pkgs.git
+          pkgs.colmena
+        ];
+        env.DIRENV_LOG_FORMAT = "";
+      };
+      
       outputs = {
         colmena = {
           meta = {
@@ -29,7 +33,7 @@
               config = { allowUnfree = true; };
               overlays = [ (final: prev: import ./pkgs final prev) ];
             };
-            specialArgs.inputs = { inherit sops-nix; };
+            specialArgs.inputs = { inherit sops-nix kea-lease-viewer; };
           };
 
           defaults = { config, lib, name, ... }: {
