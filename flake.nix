@@ -2,68 +2,59 @@
   inputs = {
     #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11-small";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    kea-lease-viewer = {
+      url = "github:reimerei/kea-lease-viewer/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-
-    kea-lease-viewer.url = "github:reimerei/kea-lease-viewer/main";
-    kea-lease-viewer.inputs.nixpkgs.follows = "nixpkgs";
+    flakelight.url = "github:nix-community/flakelight";
   };
+  outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }:
+    flakelight ./. {
+      inputs.nixpkgs = nixpkgs;
+      devShell = {
+        packages = pkgs: [
+          pkgs.alejandra
+          pkgs.git
+          pkgs.colmena
+        ];
+        env.DIRENV_LOG_FORMAT = "";
+      };
+      
+      outputs = {
+        colmena = {
+          meta = {
+            nixpkgs = import nixpkgs {
+              system = "x86_64-linux";
+              config = { allowUnfree = true; };
+              overlays = [ (final: prev: import ./pkgs final prev) ];
+            };
+            specialArgs.inputs = { inherit sops-nix kea-lease-viewer; };
+          };
 
-  outputs = { nixpkgs, ... } @inputs:
-    let
-      #System types to support.
-      supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
+          defaults = { config, lib, name, ... }: {
+            imports = [
+              (./. + "/hosts/${name}/configuration.nix")
+            ];
+            deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
+            deployment.targetUser = null;
+          };
 
-      # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+          router = { ... }: {
+            deployment.targetHost = "router.xhain.space";
+          };
 
-      # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs {
-        inherit system;
-        overlays = [ (final: prev: import ./pkgs final prev) ];
-        config = { allowUnfree = true; };
-      });
-    in
-    {
-      devShell = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor.${system};
-        in
-        pkgs.mkShell {
-          packages = with pkgs; [
-            alejandra
-            git
-            colmena
-          ];
-          name = "dots";
-          DIRENV_LOG_FORMAT = "";
-        });
+          files = { ... }: {
+            deployment.targetHost = "files.xhain.space";
+          };
 
-
-      colmena = {
-        meta = {
-          nixpkgs = nixpkgsFor."x86_64-linux";
-          specialArgs = { inherit inputs; };
+          nix-builder = { ... }: { };
         };
-
-        defaults = { config, lib, name, ... }: {
-          imports = [
-            (./. + "/hosts/${name}/configuration.nix")
-          ];
-          deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
-          deployment.targetUser = null;
-        };
-
-        router = { ... }: {
-          deployment.targetHost = "router.xhain.space";
-        };
-
-        files = { ... }: {
-          deployment.targetHost = "files.xhain.space";
-        };
-
-        nix-builder = { ... }: { };
       };
     };
+
 }
