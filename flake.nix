@@ -16,6 +16,7 @@
   outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }:
     flakelight ./. {
       inputs.nixpkgs = nixpkgs;
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       devShell = {
         packages = pkgs: [
           pkgs.alejandra
