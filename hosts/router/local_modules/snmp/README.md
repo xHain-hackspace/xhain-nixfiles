@@ -1,6 +1,5 @@
-Download [prometheus snmp-exporter](https://github.com/prometheus/snmp_exporter) and build the generator.
-
+With the devshell active (`pkgs.prometheus-snmp-exporter` is the important package)
 ```bash
 export MIBDIRS=mibs
-~/go/github.com/prometheus/snmp_exporter/generator/generator generate -o snmp.yml
+generator generate -o snmp.yml
 ```
