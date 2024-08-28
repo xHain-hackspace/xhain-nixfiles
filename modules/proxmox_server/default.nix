@@ -24,8 +24,8 @@
 
   security = {
     sudo.wheelNeedsPassword = false;
-    pam.enableSSHAgentAuth = true;
-  };
+    pam.sshAgentAuth.enable = true;
+};
 
   nix.gc.automatic = true;
   nix.gc.dates = lib.mkDefault "weekly";
