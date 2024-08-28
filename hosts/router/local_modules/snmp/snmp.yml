@@ -2917,3 +2917,7 @@ modules:
         labelname: ifName
         oid: 1.3.6.1.2.1.31.1.1.1.1
         type: DisplayString
+auths:
+  public_v2:
+    community: public
+    version: 2
