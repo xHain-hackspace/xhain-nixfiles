@@ -150,6 +150,7 @@
             "ap-baumhaus.xhain.space"
             "ap-maschinenraum.xhain.space"
             "ap-keller.xhain.space"
+            "ap-g18-front.xhain.space"
             "xdoor.lan.xhain.space"
             "45.158.40.1"
             "x-hain.de"
