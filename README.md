@@ -12,6 +12,14 @@ colmena apply --on router
 nix flake update
 ```
 
+### VM Tests
+There are some VM tests in `checks/` testing some critical services. You can run them like this:
+```bash
+nix build .#checks.x86_64-linux.<check-name>
+```
+
+Note: `nix flake check` cannot be used as currently the repo is unformatted (formatter check is inherited from flakelight)
+
 ### Secrets
 
 * Manage secrets

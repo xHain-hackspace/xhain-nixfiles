@@ -28,6 +28,9 @@
         env.DIRENV_LOG_FORMAT = "";
       };
 
+
+      checks = import ./checks;
+
       outputs = {
         colmena = {
           meta = {

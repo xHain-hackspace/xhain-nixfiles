@@ -25,17 +25,30 @@ let
   };
 in
 {
-  systemd.services.bind.preStart = ''
+  systemd.services."bind-create-dynamic-zones" = {
+    before = [ "bind.service" ];
+    after = [ "network.target" ];
+    wantedBy = [ "bind.service" ];
+    script = ''
     mkdir -p /var/lib/bind
     chown named /var/lib/bind
-    ${ concatStrings (map (zone: ''
+      ${concatStrings (
+        map (zone: ''
       if [[ ! -f /var/lib/bind/${zone}zone ]]; then
         cp "${templateFile}" "/var/lib/bind/${zone}zone"
       fi
       chmod 0644 "/var/lib/bind/${zone}zone"
       chown named "/var/lib/bind/${zone}zone"
-    '') dynamicZones) }
+        '') dynamicZones
+      )}
   '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+      RemainAfterExit = true;
+    };
+  };
+
   services.bind = {
     enable = true;
     cacheNetworks = [
