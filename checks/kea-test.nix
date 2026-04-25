@@ -24,9 +24,23 @@ pkgs.testers.runNixOSTest {
           )).outPath;
       };
 
-      # Use available interfaces for testing (production uses voc, intern, hosting, guest)
-      services.kea.dhcp4.settings.interfaces-config = lib.mkForce {
-        interfaces = [ "eth0" ];
+      networking.vlans = {
+        intern = {
+          interface = "eth0";
+          id = 42;
+        };
+        hosting = {
+          interface = "eth0";
+          id = 37;
+        };
+        guest = {
+          interface = "eth0";
+          id = 12;
+        };
+        voc = {
+          interface = "eth0";
+          id = 23;
+        };
       };
     };
 
