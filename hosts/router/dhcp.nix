@@ -65,10 +65,6 @@ let
   controlSocket = "/run/kea/dhcp4.sock";
 in
 {
-  imports = [
-    inputs.kea-lease-viewer.nixosModules.default
-  ];
-
   users.users.kea = {
     isSystemUser = true;
     group = "kea";
@@ -115,7 +111,7 @@ in
 
         hooks-libraries = [
           {
-            library = "/var/run/current-system/sw/lib/kea/hooks/libdhcp_lease_cmds.so";
+            library = "${pkgs.kea}/lib/kea/hooks/libdhcp_lease_cmds.so";
             parameters = {};
           }
         ];

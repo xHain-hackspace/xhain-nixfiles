@@ -14,7 +14,7 @@
     flakelight.url = "github:nix-community/flakelight";
     flakelight.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }:
+  outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }@inputs:
     flakelight ./. {
       inputs.nixpkgs = nixpkgs;
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
@@ -29,7 +29,7 @@
       };
 
 
-      checks = import ./checks;
+      checks = import ./checks inputs;
 
       outputs = {
         colmena = {
@@ -52,6 +52,9 @@
 
           router = { ... }: {
             deployment.targetHost = "router.xhain.space";
+            imports = [
+             kea-lease-viewer.nixosModules.default
+  ]         ;
           };
 
           files = { ... }: {
