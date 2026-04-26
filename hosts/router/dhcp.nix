@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 
 let
   subnets = {
@@ -35,7 +41,7 @@ let
   mkKeaSubnet = name: attrs: {
     id = attrs.id;
     subnet = attrs.subnet;
-    pools = [{ pool = attrs.dhcp_range; }];
+    pools = [ { pool = attrs.dhcp_range; } ];
     ddns-qualifying-suffix = attrs.ddns_domain;
     option-data = [
       {
@@ -56,12 +62,12 @@ let
       }
     ];
   };
-  mkKeaDdnsDomains = name: attrs:
-    ''{
-        "dns-servers": [{"ip-address": "127.0.0.1"}],
-        "key-name": "rndc-key",
-        "name": "${attrs.ddns_domain}"
-      }'';
+  mkKeaDdnsDomains = name: attrs: ''
+    {
+            "dns-servers": [{"ip-address": "127.0.0.1"}],
+            "key-name": "rndc-key",
+            "name": "${attrs.ddns_domain}"
+          }'';
   controlSocket = "/run/kea/dhcp4.sock";
 in
 {
@@ -71,7 +77,9 @@ in
   };
   users.groups.kea = { };
 
-  secrets.kea-ddns-key.owner = "kea";
+  sops.secrets.kea-ddns-key = {
+    owner = "kea";
+  };
 
   services.kea = {
     dhcp4 = {
@@ -83,7 +91,12 @@ in
         rebind-timer = 9800;
 
         interfaces-config = {
-          interfaces = [ "voc" "intern" "hosting" "guest" ];
+          interfaces = [
+            "voc"
+            "intern"
+            "hosting"
+            "guest"
+          ];
         };
 
         lease-database = {
@@ -120,7 +133,7 @@ in
           {
             name = "uefi HTTP Clients";
             #test = "substring(option[60].hex,0,10) == 'HTTPClient' and (option[93].hex == 0x0007 or option[93].hex == 0x0010)";
-            test = "substring(option[60].hex,0,10) == 'HTTPClient'"; 
+            test = "substring(option[60].hex,0,10) == 'HTTPClient'";
             option-data = [
               {
                 space = "dhcp4";
@@ -143,7 +156,7 @@ in
         hooks-libraries = [
           {
             library = "${pkgs.kea}/lib/kea/hooks/libdhcp_lease_cmds.so";
-            parameters = {};
+            parameters = { };
           }
         ];
 
@@ -174,7 +187,7 @@ in
               ]
             },
             "tsig-keys": [
-              <?include "${config.secrets.kea-ddns-key.path}"?>
+              <?include "${config.sops.secrets.kea-ddns-key.path}"?>
             ],
             # "loggers": [
             #   {
@@ -213,7 +226,7 @@ in
     keaSocketPath = controlSocket;
   };
 
-   services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} =  {
+  services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} = {
     locations."/leases" = {
       recommendedProxySettings = true;
       proxyPass = "http://${config.services.kea-lease-viewer.listenAddress}:${toString config.services.kea-lease-viewer.port}/";
