@@ -24,6 +24,7 @@
           pkgs.alejandra
           pkgs.git
           pkgs.colmena
+          pkgs.sops
 #          pkgs.prometheus-snmp-exporter
         ];
         env.DIRENV_LOG_FORMAT = "";

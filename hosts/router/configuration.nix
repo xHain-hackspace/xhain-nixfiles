@@ -1,7 +1,14 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
+    inputs.sops-nix.nixosModules.sops
     ../../modules/nftables
     ../../modules/prometheus-iperf3-exporter
     ../../modules/rollback
@@ -21,7 +28,12 @@
   # boot.loader.grub.enable = true;
   # boot.loader.grub.version = 2;
   # boot.loader.grub.device = "/dev/sda";
-  boot.kernelParams = [ "console=ttyS0,115200n8" "console=tty0" "panic=1" "boot.panic_on_fail" ];
+  boot.kernelParams = [
+    "console=ttyS0,115200n8"
+    "console=tty0"
+    "panic=1"
+    "boot.panic_on_fail"
+  ];
 
   networking.hostName = "router";
   networking.domain = "xhain.space";
@@ -29,6 +41,9 @@
   networking.interfaces.enp1s0.useDHCP = true;
   networking.useNetworkd = true;
   services.resolved.dnssec = "false";
+
+  # sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  sops.defaultSopsFile = ../../secrets/router.yaml;
 
   #networking.nameservers = [
   #  "2606:4700:4700::1111" "2001:4860:4860::8888" "2606:4700:4700::1001" "2001:4860:4860::8844"
