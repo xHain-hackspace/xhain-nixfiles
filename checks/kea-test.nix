@@ -47,5 +47,8 @@ pkgs.testers.runNixOSTest {
   testScript = ''
     start_all()
     machine.wait_for_unit("kea-dhcp4-server.service")
+    machine.wait_for_unit("kea-lease-viewer.service")
+    machine.wait_for_open_port(4000)
+    machine.succeed("curl -fsS http://127.0.0.1:4000/ > /dev/null")
   '';
 }

@@ -104,10 +104,12 @@ in
 
         subnet4 = lib.mapAttrsToList mkKeaSubnet subnets;
 
-        control-socket = {
-          socket-type = "unix";
-          socket-name = controlSocket;
-        };
+        control-sockets = [
+          {
+            socket-type = "unix";
+            socket-name = controlSocket;
+          }
+        ];
 
         hooks-libraries = [
           {
@@ -164,23 +166,22 @@ in
     };
   };
 
-  systemd.services.kea-socket-permissions = {
-    wantedBy = ["multi-user.target"];
-    after = ["kea-dhcp4-server.service"];
-    wants = ["kea-dhcp4-server.service"];
+  systemd.services.kea-dhcp4-server = {
+    serviceConfig.DynamicUser = lib.mkForce false;
     preStart = ''
-      /bin/sh -c 'while [ ! -e ${controlSocket} ]; do echo " Waiting for ${controlSocket} "; sleep 1; done'
-    '';
-    script = ''
-      chown -v kea-lease-viewer:kea ${controlSocket}
-      chmod -v 660 ${controlSocket}
-      ln -f -v ${controlSocket} /run/kea-dhcp4.sock
+      if [ -e "${controlSocket}" ]; then
+        echo "Removing stale control socket: ${controlSocket}"
+        unlink "${controlSocket}" || echo "Failed to remove: ${controlSocket}"
+      fi
     '';
   };
+  systemd.services.kea-dhcp-ddns-server.serviceConfig.DynamicUser = lib.mkForce false;
 
   services.kea-lease-viewer = {
     enable = true;
-    keaSocketPath = "/run/kea-dhcp4.sock";
+    user = "kea";
+    group = "kea";
+    keaSocketPath = controlSocket;
   };
 
    services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} =  {

@@ -27,11 +27,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1744203140,
-        "narHash": "sha256-uTZC2cJ4XzfUN7+hVdaGAyY2AD8ws+979B5/DxOYuNo=",
+        "lastModified": 1776755092,
+        "narHash": "sha256-4FFaNRtKyI0UOyQ0GD/+/SV5pEp/BkubSz/SWx5fDkM=",
         "owner": "reimerei",
         "repo": "kea-lease-viewer",
-        "rev": "96bb3b904bd2bd303eb451f3f4041fd3cad50b33",
+        "rev": "4957fe5adb2fed0c8ce39c3db9870b6e2388b0a5",
         "type": "github"
       },
       "original": {
