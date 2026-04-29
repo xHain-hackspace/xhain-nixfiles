@@ -8,6 +8,8 @@
     "40-voc".networkConfig.ConfigureWithoutCarrier = true;
   };
 
+  systemd.network.wait-online.ignoredInterfaces = [ "enp6s0f4" ];
+
   networking.vlans.intern = { interface = "enp6s0f4"; id = 42; };
   networking.vlans.hosting = { interface = "enp6s0f4"; id = 37; };
   networking.vlans.guest = { interface = "enp6s0f4"; id = 12; };
