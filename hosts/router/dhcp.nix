@@ -188,6 +188,9 @@ in
     locations."/leases" = {
       recommendedProxySettings = true;
       proxyPass = "http://${config.services.kea-lease-viewer.listenAddress}:${toString config.services.kea-lease-viewer.port}/";
+      extraConfig = ''
+        proxy_set_header X-Admin-Request "true";
+      '';
     };
   };
 }
