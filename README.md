@@ -20,6 +20,10 @@ nix build .#checks.x86_64-linux.<check-name>
 
 Note: `nix flake check` cannot be used as currently the repo is unformatted (formatter check is inherited from flakelight)
 
+### Rolling back
+
+Use the `rollback` script on any machine provisioned by this repo to revert to a previous version.
+
 ### Secrets
 
 * Manage secrets
