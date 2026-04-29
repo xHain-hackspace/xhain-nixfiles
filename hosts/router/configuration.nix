@@ -4,6 +4,7 @@
   imports = [
     ../../modules/nftables
     ../../modules/prometheus-iperf3-exporter
+    ../../modules/rollback
     ../../modules/secrets
     ../../modules/groups/admins.nix
     ../../modules/users/fluepke.nix
