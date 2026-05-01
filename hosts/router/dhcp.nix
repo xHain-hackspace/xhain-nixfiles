@@ -71,7 +71,7 @@ in
   };
   users.groups.kea = { };
 
-  secrets.kea-ddns-key.owner = "kea";
+  sops.secrets.kea-ddns-key.owner = "kea";
 
   services.kea = {
     dhcp4 = {
@@ -145,7 +145,7 @@ in
               ]
             },
             "tsig-keys": [
-              <?include "${config.secrets.kea-ddns-key.path}"?>
+              <?include "${config.sops.secrets.kea-ddns-key.path}"?>
             ],
             # "loggers": [
             #   {
