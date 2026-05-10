@@ -65,4 +65,9 @@
     };
   };
 
+  networking.firewall.allowedUDPPorts = [ 69 ];
+  services.atftpd = {
+    enable = true;
+    root = "/srv/tftp";
+  };
 }
