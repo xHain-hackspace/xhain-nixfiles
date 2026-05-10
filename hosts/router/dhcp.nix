@@ -104,6 +104,35 @@ in
 
         subnet4 = lib.mapAttrsToList mkKeaSubnet subnets;
 
+        client-classes = [
+          {
+            name = "uefi PXE Clients";
+            test = "substring(option[60].hex,0,9) == 'PXEClient' and option[93].hex == 0x0007";
+            next-server = "192.168.42.2";
+            boot-file-name = "/uefi/BOOT/BOOTX64.EFI";
+          }
+          {
+            name = "bios PXE Clients";
+            test = "substring(option[60].hex,0,9) == 'PXEClient' and option[93].hex == 0x0000";
+            next-server = "192.168.42.2";
+            boot-file-name = "syslinux/pxelinux.0";
+          }
+          {
+            name = "uefi HTTP Clients";
+            #test = "substring(option[60].hex,0,10) == 'HTTPClient' and (option[93].hex == 0x0007 or option[93].hex == 0x0010)";
+            test = "substring(option[60].hex,0,10) == 'HTTPClient'"; 
+            option-data = [
+              {
+                space = "dhcp4";
+                name = "vendor-class-identifier";
+                code = 60;
+                data = "HTTPClient";
+              }
+            ];
+            boot-file-name = "https://boot.netboot.xyz/menu.ipxe";
+          }
+        ];
+
         control-sockets = [
           {
             socket-type = "unix";
