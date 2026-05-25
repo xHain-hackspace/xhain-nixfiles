@@ -52,5 +52,5 @@ sw-3dlab              IN      CNAME      sw-g16-basement
 sw-rack               IN      CNAME      sw-g16-rack
 ap-tuer               IN      CNAME      ap-g16-door
 ap-maschinenraum      IN      CNAME      ap-g16-backdoor
-ap-keller             IN      CNAME.     ap-g16-basement
+ap-keller             IN      CNAME      ap-g16-basement
 ap-baumhaus           IN      CNAME      ap-g16-treehouse
