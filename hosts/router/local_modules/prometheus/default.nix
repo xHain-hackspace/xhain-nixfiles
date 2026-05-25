@@ -145,7 +145,6 @@
             "sw-g16-main.xhain.space"
             "sw-g16-rack.xhain.space"
             "sw-g16-basement.xhain.space"
-            "sw-3dlab.xhain.space"
             "sw-g16-backdoor.xhain.space"
             "ap-g16-door.xhain.space"
             "ap-g16-treehouse.xhain.space"
