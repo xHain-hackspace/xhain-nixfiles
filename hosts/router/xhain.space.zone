@@ -19,19 +19,35 @@ laser                 IN      A          192.168.42.3
 pve                   IN      A          192.168.42.4
 ccu3                  IN      A          192.168.42.5
 
+rl1-g16               IN      A          192.168.42.7
+rl1-g20               IN      A          192.168.42.8
+
 artnet                IN      A          192.168.42.9
 
-sw-3dlab              IN      A          192.168.42.10
-sw-keller             IN      A          192.168.42.11
-sw-rack               IN      A          192.168.42.12
-sw-maschinenraum      IN      A          192.168.42.13
-sw-main               IN      A          192.168.42.14
+sw-g16-basement       IN      A          192.168.42.10
+sw-g16-rack           IN      A          192.168.42.12
+sw-g16-backdoor       IN      A          192.168.42.13
+sw-g16-main           IN      A          192.168.42.14
 sw-core               IN      A          192.168.42.15
+sw-g18                IN      A          192.168.42.18
+sw-g20                IN      A          192.168.42.19
 
-wifi-outdoor          IN      A          192.168.42.19
+; virtual controller IP
 wifi                  IN      A          192.168.42.20
-ap-door               IN      A          192.168.42.21
-ap-baumhaus           IN      A          192.168.42.22
-ap-maschinenraum      IN      A          192.168.42.23
-ap-keller             IN      A          192.168.42.24
+; all Aruba IAP/UAPs
+ap-g16-door           IN      A          192.168.42.21
+ap-g16-treehouse      IN      A          192.168.42.22
+ap-g16-backdoor       IN      A          192.168.42.23
+ap-g16-basement       IN      A          192.168.42.24
 ap-g18-front          IN      A          192.168.42.25
+ap-g18-back           IN      A          192.168.42.26
+ap-g20                IN      A          192.168.42.27
+; separate OpenWRT outdoor router
+wifi-outdoor          IN      A          192.168.42.29
+
+; legacy names, deprecated
+sw-maschinenraum      IN      CNAME      sw-g16-backdoor
+sw-main               IN      CNAME      sw-g16-main
+sw-3dlab              IN      CNAME      sw-g16-basement
+sw-rack               IN      CNAME      sw-g16-rack
+ap-baumhaus           IN      CNAME      ap-g16-treehouse

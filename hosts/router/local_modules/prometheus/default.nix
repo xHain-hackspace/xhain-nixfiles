@@ -124,11 +124,12 @@
         static_configs = [{
           targets = [
             "sw-core.xhain.space"
-            "sw-main.xhain.space"
-            "sw-rack.xhain.space"
-            "sw-keller.xhain.space"
-            "sw-3dlab.xhain.space"
-            "sw-maschinenraum.xhain.space"
+            "sw-g16-main.xhain.space"
+            "sw-g16-rack.xhain.space"
+            "sw-g16-basement.xhain.space"
+            "sw-g16-backdoor.xhain.space"
+            "sw-g18.xhain.space"
+            "sw-g20.xhain.space"
           ];
         }];
       }
@@ -141,16 +142,17 @@
         static_configs = [{
           targets = [
             "sw-core.xhain.space"
-            "sw-main.xhain.space"
-            "sw-rack.xhain.space"
-            "sw-keller.xhain.space"
+            "sw-g16-main.xhain.space"
+            "sw-g16-rack.xhain.space"
+            "sw-g16-basement.xhain.space"
             "sw-3dlab.xhain.space"
-            "sw-maschinenraum.xhain.space"
-            "ap-tuer.xhain.space"
-            "ap-baumhaus.xhain.space"
-            "ap-maschinenraum.xhain.space"
-            "ap-keller.xhain.space"
+            "sw-g16-backdoor.xhain.space"
+            "ap-g16-door.xhain.space"
+            "ap-g16-treehouse.xhain.space"
+            "ap-g16-basement.xhain.space"
             "ap-g18-front.xhain.space"
+            "ap-g18-back.xhain.space"
+            "ap-g20.xhain.space"
             "xdoor.lan.xhain.space"
             "45.158.40.1"
             "x-hain.de"
