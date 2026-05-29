@@ -7,15 +7,18 @@
     defaults.email = "acme@x-hain.de";
     acceptTerms = true;
   };
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
-  secrets.htpasswd.owner = "nginx";
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
+  sops.secrets.htpasswd.owner = "nginx";
   services.nginx = {
     enable = true;
     statusPage = true;
     virtualHosts.${config.networking.hostName + "." + config.networking.domain} = {
       enableACME = true;
       forceSSL = true;
-      basicAuthFile = config.secrets.htpasswd.path;
+      basicAuthFile = config.sops.secrets.htpasswd.path;
       extraConfig = ''
         satisfy  any;
         allow ::1/128;
