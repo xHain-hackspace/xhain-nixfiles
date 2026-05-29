@@ -6,7 +6,6 @@ pkgs.testers.runNixOSTest {
     {
       imports = [
         inputs.kea-lease-viewer.nixosModules.default
-        ../modules/secrets
         ../hosts/router/dhcp.nix
       ];
 
