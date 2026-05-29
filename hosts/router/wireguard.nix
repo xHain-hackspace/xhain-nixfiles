@@ -2,8 +2,9 @@
 
 let
   port = 51820;
-in {
-  secrets.wireguard.owner = "systemd-network";
+in
+{
+  sops.secrets.wireguard.owner = "systemd-network";
 
   systemd.network = {
     netdevs = {
@@ -14,7 +15,7 @@ in {
           MTUBytes = "1500";
         };
         wireguardConfig = {
-          PrivateKeyFile = config.secrets.wireguard.path;
+          PrivateKeyFile = config.sops.secrets.wireguard.path;
           ListenPort = port;
           FirewallMark = port;
         };
@@ -24,7 +25,10 @@ in {
               PublicKey = "zrY+mrpozwcv4ZkqCDkVAwx9aISAX6JZOGzpZBsFonc=";
               PersistentKeepalive = 21;
               Endpoint = "45.158.40.1:51213";
-              AllowedIPs = [ "0.0.0.0/0" "::/0" ];
+              AllowedIPs = [
+                "0.0.0.0/0"
+                "::/0"
+              ];
             };
           }
         ];
@@ -123,10 +127,16 @@ in {
 
   networking.interfaces.wg0 = {
     ipv4.addresses = [
-      { address = "45.158.40.192"; prefixLength = 32; }
+      {
+        address = "45.158.40.192";
+        prefixLength = 32;
+      }
     ];
     ipv6.addresses = [
-      { address = "2a0f:5382:acab:1300::1"; prefixLength = 128; }
+      {
+        address = "2a0f:5382:acab:1300::1";
+        prefixLength = 128;
+      }
     ];
   };
 
