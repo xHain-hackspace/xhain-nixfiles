@@ -2,6 +2,7 @@ keys:
   - &danimo age1jt9l7zef9mqdvjlkur2eqd6gsvyaj469nfxucv7dv08e3qpuvudswcf0ng
   - &reimerei age1p7kfmmtpcaxp8ya54azxwufl85ru3rlnpay27d3h4nrucyn6afzqzw5zrz
   - &lenny age164tnfsyunrhyyrmgdn437ajcyyn2ch4y453eu3e0s8z4jtnmc4qqfj0m5z
+  - &gueldi ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkN6Gh946RDixD57F0DVCKDSWTgJWIdW5YXbokMXuwi
   - &machine_router age139t43h3ey5zn2uj5wh42upzzfqv9m5x6rwdy3g29n77yr5kwadns4n5xcs
 
 creation_rules:
@@ -11,4 +12,5 @@ creation_rules:
           - *danimo
           - *reimerei
           - *lenny
+          - *gueldi
           - *machine_router
