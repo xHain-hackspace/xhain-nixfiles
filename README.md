@@ -26,12 +26,7 @@ Use the `rollback` script on any machine provisioned by this repo to revert to a
 
 ### Secrets
 
-* Manage secrets
-```
-  lib/pass.h
-```
-
-* Add new keys in `secrets/.public-keys`
+Secrets live in `secrets/` and are managed with [sops-nix](https://github.com/mic92/sops-nix).
 
 ### ToDo
 * give routing tables names that can be read by humans
