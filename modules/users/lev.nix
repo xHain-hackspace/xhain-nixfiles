@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  users.users.lev= {
+  users.users.lev = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [

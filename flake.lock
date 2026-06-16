@@ -20,6 +20,27 @@
         "type": "github"
       }
     },
+    "flakelight-treefmt": {
+      "inputs": {
+        "flakelight": [
+          "flakelight"
+        ],
+        "treefmt-nix": "treefmt-nix"
+      },
+      "locked": {
+        "lastModified": 1781628698,
+        "narHash": "sha256-IGBMrFD8pKqFg807+xhuQROObAm+dlhqyH6TsxZk7ac=",
+        "owner": "m15a",
+        "repo": "flakelight-treefmt",
+        "rev": "28878930132786a6623c66b2dcfa47901b2a118e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "m15a",
+        "repo": "flakelight-treefmt",
+        "type": "github"
+      }
+    },
     "kea-lease-viewer": {
       "inputs": {
         "nixpkgs": [
@@ -60,6 +81,7 @@
     "root": {
       "inputs": {
         "flakelight": "flakelight",
+        "flakelight-treefmt": "flakelight-treefmt",
         "kea-lease-viewer": "kea-lease-viewer",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix"
@@ -82,6 +104,28 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "treefmt-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "flakelight-treefmt",
+          "flakelight",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780220602,
+        "narHash": "sha256-eynAfOmbmxJnkp7YewvCEbShNnnYJ9gLLqkzsYtBPeM=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "db947814a175b7ca6ded66e21383d938df01c227",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
         "type": "github"
       }
     }
