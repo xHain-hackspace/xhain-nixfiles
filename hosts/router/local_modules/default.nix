@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -25,7 +30,10 @@
   security.sudo.wheelNeedsPassword = false;
 
   nix.gc.automatic = lib.mkDefault true;
-  nix.settings.trusted-users = [ "root" "@wheel" ];
+  nix.settings.trusted-users = [
+    "root"
+    "@wheel"
+  ];
 
   environment.systemPackages = with pkgs; [
     htop

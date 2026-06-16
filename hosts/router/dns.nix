@@ -16,7 +16,10 @@ let
   mkDynamicZone = name: {
     inherit name;
     master = true;
-    slaves = [ "127.0.0.1" "::1" ];
+    slaves = [
+      "127.0.0.1"
+      "::1"
+    ];
     file = "/var/lib/bind/${name}zone";
     extraConfig = ''
       allow-update { key "rndc-key"; };
@@ -29,18 +32,18 @@ in
     before = [ "bind.service" ];
     wantedBy = [ "bind.service" ];
     script = ''
-    mkdir -p /var/lib/bind
-    chown named /var/lib/bind
-      ${concatStrings (
-        map (zone: ''
-      if [[ ! -f /var/lib/bind/${zone}zone ]]; then
-        cp "${templateFile}" "/var/lib/bind/${zone}zone"
-      fi
-      chmod 0644 "/var/lib/bind/${zone}zone"
-      chown named "/var/lib/bind/${zone}zone"
-        '') dynamicZones
-      )}
-  '';
+      mkdir -p /var/lib/bind
+      chown named /var/lib/bind
+        ${concatStrings (
+          map (zone: ''
+            if [[ ! -f /var/lib/bind/${zone}zone ]]; then
+              cp "${templateFile}" "/var/lib/bind/${zone}zone"
+            fi
+            chmod 0644 "/var/lib/bind/${zone}zone"
+            chown named "/var/lib/bind/${zone}zone"
+          '') dynamicZones
+        )}
+    '';
     serviceConfig = {
       Type = "oneshot";
       User = "root";
@@ -66,10 +69,14 @@ in
       {
         name = "xhain.space.";
         master = true;
-        slaves = [ "127.0.0.1" "::1" ];
+        slaves = [
+          "127.0.0.1"
+          "::1"
+        ];
         file = ./xhain.space.zone;
       }
-    ] ++ (map mkDynamicZone dynamicZones);
+    ]
+    ++ (map mkDynamicZone dynamicZones);
   };
 
   networking.firewall.allowedUDPPorts = [ 53 ];

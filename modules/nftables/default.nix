@@ -1,4 +1,10 @@
-{ pkgs, lib, config, modulesPath, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  modulesPath,
+  ...
+}:
 
 let
   fwcfg = config.networking.firewall;
@@ -6,12 +12,15 @@ let
 
   doDocker = config.virtualisation.docker.enable && cfg.generateDockerRules;
 
-  mkPorts = cond: ports: ranges: action: let
-    portStrings = (map (range: "${toString range.from}-${toString range.to}") ranges)
-               ++ (map toString ports);
-  in lib.optionalString (portStrings != []) ''
-    ${cond} dport { ${lib.concatStringsSep ", " portStrings} } ${action}
-  '';
+  mkPorts =
+    cond: ports: ranges: action:
+    let
+      portStrings =
+        (map (range: "${toString range.from}-${toString range.to}") ranges) ++ (map toString ports);
+    in
+    lib.optionalString (portStrings != [ ]) ''
+      ${cond} dport { ${lib.concatStringsSep ", " portStrings} } ${action}
+    '';
 
   ruleset = ''
     table inet filter {
@@ -25,19 +34,18 @@ let
         ct state invalid drop
         ct state established,related accept
 
-        iifname { ${
-          lib.concatStringsSep "," (["lo"] ++ fwcfg.trustedInterfaces)
-        } } accept
+        iifname { ${lib.concatStringsSep "," ([ "lo" ] ++ fwcfg.trustedInterfaces)} } accept
 
         ${mkPorts "tcp" fwcfg.allowedTCPPorts fwcfg.allowedTCPPortRanges "accept"}
         ${mkPorts "udp" fwcfg.allowedUDPPorts fwcfg.allowedUDPPortRanges "accept"}
 
-        ${
-          lib.concatStringsSep "\n" (lib.mapAttrsToList (name: ifcfg:
-              mkPorts "iifname ${name} tcp" ifcfg.allowedTCPPorts ifcfg.allowedTCPPortRanges "accept"
+        ${lib.concatStringsSep "\n" (
+          lib.mapAttrsToList (
+            name: ifcfg:
+            mkPorts "iifname ${name} tcp" ifcfg.allowedTCPPorts ifcfg.allowedTCPPortRanges "accept"
             + mkPorts "iifname ${name} udp" ifcfg.allowedUDPPorts ifcfg.allowedUDPPortRanges "accept"
-          ) fwcfg.interfaces)
-        }
+          ) fwcfg.interfaces
+        )}
 
         # DHCPv6
         ip6 daddr fe80::/64 udp dport 546 accept
@@ -85,7 +93,8 @@ let
     text = ruleset;
   };
 
-in {
+in
+{
   options = with lib; {
     nftables = {
       enable = mkEnableOption "nftables firewall";
@@ -139,48 +148,55 @@ in {
       wants = [ "network-pre.target" ];
       wantedBy = [ "multi-user.target" ];
       reloadIfChanged = true;
-      serviceConfig = let
-        rulesScript = pkgs.writeScript "nftables-rules" ''
-          #! ${pkgs.nftables}/bin/nft -f
-          flush ruleset
-          include "${rulesetFile}"
-        '';
-        checkScript = pkgs.writeScript "nftables-check" ''
-          #! ${pkgs.runtimeShell} -e
-          if $(${pkgs.kmod}/bin/lsmod | grep -q ip_tables); then
-            ${pkgs.iptables}/bin/iptables -P INPUT ACCEPT
-            ${pkgs.iptables}/bin/iptables -P FORWARD ACCEPT
-            ${pkgs.iptables}/bin/iptables -P OUTPUT ACCEPT
-            ${pkgs.iptables}/bin/iptables -t nat -F
-            ${pkgs.iptables}/bin/iptables -t mangle -F
-            ${pkgs.iptables}/bin/iptables -F
-            ${pkgs.iptables}/bin/iptables -X
-          fi
-          if $(${pkgs.kmod}/bin/lsmod | grep -q ip6_tables); then
-            ${pkgs.iptables}/bin/ip6tables -P INPUT ACCEPT
-            ${pkgs.iptables}/bin/ip6tables -P FORWARD ACCEPT
-            ${pkgs.iptables}/bin/ip6tables -P OUTPUT ACCEPT
-            ${pkgs.iptables}/bin/ip6tables -t nat -F
-            ${pkgs.iptables}/bin/ip6tables -t mangle -F
-            ${pkgs.iptables}/bin/ip6tables -F
-            ${pkgs.iptables}/bin/ip6tables -X
-          fi
-          ${if cfg.needIptables then ''
-            ${pkgs.kmod}/bin/modprobe iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables
-            ${pkgs.kmod}/bin/modprobe ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables
-          '' else ''
-            ${pkgs.kmod}/bin/rmmod iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables || true
-            ${pkgs.kmod}/bin/rmmod ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables || true
-          ''}
-          ${rulesScript}
-        '';
-      in {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = checkScript;
-        ExecReload = checkScript;
-        ExecStop = "${pkgs.nftables}/bin/nft flush ruleset";
-      };
+      serviceConfig =
+        let
+          rulesScript = pkgs.writeScript "nftables-rules" ''
+            #! ${pkgs.nftables}/bin/nft -f
+            flush ruleset
+            include "${rulesetFile}"
+          '';
+          checkScript = pkgs.writeScript "nftables-check" ''
+            #! ${pkgs.runtimeShell} -e
+            if $(${pkgs.kmod}/bin/lsmod | grep -q ip_tables); then
+              ${pkgs.iptables}/bin/iptables -P INPUT ACCEPT
+              ${pkgs.iptables}/bin/iptables -P FORWARD ACCEPT
+              ${pkgs.iptables}/bin/iptables -P OUTPUT ACCEPT
+              ${pkgs.iptables}/bin/iptables -t nat -F
+              ${pkgs.iptables}/bin/iptables -t mangle -F
+              ${pkgs.iptables}/bin/iptables -F
+              ${pkgs.iptables}/bin/iptables -X
+            fi
+            if $(${pkgs.kmod}/bin/lsmod | grep -q ip6_tables); then
+              ${pkgs.iptables}/bin/ip6tables -P INPUT ACCEPT
+              ${pkgs.iptables}/bin/ip6tables -P FORWARD ACCEPT
+              ${pkgs.iptables}/bin/ip6tables -P OUTPUT ACCEPT
+              ${pkgs.iptables}/bin/ip6tables -t nat -F
+              ${pkgs.iptables}/bin/ip6tables -t mangle -F
+              ${pkgs.iptables}/bin/ip6tables -F
+              ${pkgs.iptables}/bin/ip6tables -X
+            fi
+            ${
+              if cfg.needIptables then
+                ''
+                  ${pkgs.kmod}/bin/modprobe iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables
+                  ${pkgs.kmod}/bin/modprobe ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables
+                ''
+              else
+                ''
+                  ${pkgs.kmod}/bin/rmmod iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables || true
+                  ${pkgs.kmod}/bin/rmmod ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables || true
+                ''
+            }
+            ${rulesScript}
+          '';
+        in
+        {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStart = checkScript;
+          ExecReload = checkScript;
+          ExecStop = "${pkgs.nftables}/bin/nft flush ruleset";
+        };
     };
 
     virtualisation.docker = lib.mkIf doDocker {

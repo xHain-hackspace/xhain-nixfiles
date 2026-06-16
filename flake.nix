@@ -13,12 +13,32 @@
 
     flakelight.url = "github:nix-community/flakelight";
     flakelight.inputs.nixpkgs.follows = "nixpkgs";
+    flakelight-treefmt.url = "github:m15a/flakelight-treefmt";
+    flakelight-treefmt.inputs.flakelight.follows = "flakelight";
   };
-  outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      sops-nix,
+      kea-lease-viewer,
+      flakelight,
+      ...
+    }@inputs:
     flakelight ./. {
+      inputs.self = self;
       inputs.nixpkgs = nixpkgs;
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+      imports = [ inputs.flakelight-treefmt.flakelightModules.default ];
+      treefmtConfig = {
+        programs.nixfmt.enable = true;
+        programs.terraform.enable = true;
+      };
       flakelight.builtinFormatters = false;
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
       devShell = {
         packages = pkgs: [
           pkgs.alejandra
@@ -31,7 +51,6 @@
         env.DIRENV_LOG_FORMAT = "";
       };
 
-
       checks = import ./checks inputs;
 
       outputs = {
@@ -39,30 +58,43 @@
           meta = {
             nixpkgs = import nixpkgs {
               system = "x86_64-linux";
-              config = { allowUnfree = true; };
+              config = {
+                allowUnfree = true;
+              };
               overlays = [ (final: prev: import ./pkgs final prev) ];
             };
             specialArgs.inputs = { inherit sops-nix kea-lease-viewer; };
           };
 
-          defaults = { config, lib, name, ... }: {
-            imports = [
-              (./. + "/hosts/${name}/configuration.nix")
-            ];
-            deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
-            deployment.targetUser = null;
-          };
+          defaults =
+            {
+              config,
+              lib,
+              name,
+              ...
+            }:
+            {
+              imports = [
+                (./. + "/hosts/${name}/configuration.nix")
+              ];
+              deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
+              deployment.targetUser = null;
+            };
 
-          router = { ... }: {
-            deployment.targetHost = "router.xhain.space";
-            imports = [
-             kea-lease-viewer.nixosModules.default
-  ]         ;
-          };
+          router =
+            { ... }:
+            {
+              deployment.targetHost = "router.xhain.space";
+              imports = [
+                kea-lease-viewer.nixosModules.default
+              ];
+            };
 
-          files = { ... }: {
-            deployment.targetHost = "files.xhain.space";
-          };
+          files =
+            { ... }:
+            {
+              deployment.targetHost = "files.xhain.space";
+            };
 
           nix-builder = { ... }: { };
         };

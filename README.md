@@ -30,6 +30,13 @@ Use the `rollback` script on any machine provisioned by this repo to revert to a
 
 Secrets live in `secrets/` and are managed with [sops-nix](https://github.com/mic92/sops-nix).
 
+### Formatting
+This repo uses treefmt via [treefmt-nix](https://github.com/numtide/treefmt-nix).
+
+Run `nix fmt` to format the codebase.
+
+It's configured in `flake.nix`. A flake check is also avaiable to catch missed formatting in CI. 
+
 ### ToDo
 
 * give routing tables names that can be read by humans
