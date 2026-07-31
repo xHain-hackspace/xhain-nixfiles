@@ -5,8 +5,8 @@ with lib;
 let
   templateFile = pkgs.writeText "template.zone" ''
     $TTL 3600
-    @               IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021112802 7200 900 1209600 86400
-                    IN      NS         ns1.xhain.space.
+    @               IN      SOA     ns1.xhain.space. hostmaster.x-hain.de. 2021112802 7200 900 1209600 86400
+                    IN      NS      ns1.xhain.space.
   '';
   dynamicZones = [
     "lan.xhain.space."
@@ -17,37 +17,15 @@ let
     inherit name;
     master = true;
     slaves = [ "127.0.0.1" "::1" ];
-    file = "/var/lib/bind/${name}zone";
+    file = pkgs.writeText "${name}zone" (builtins.readFile templateFile);
     extraConfig = ''
       allow-update { key "rndc-key"; };
+      # journal go to a writable dir (Nix store is read-only)
       journal "/var/run/named/${name}zone.jnl";
     '';
   };
 in
 {
-  systemd.services."bind-create-dynamic-zones" = {
-    before = [ "bind.service" ];
-    wantedBy = [ "bind.service" ];
-    script = ''
-    mkdir -p /var/lib/bind
-    chown named /var/lib/bind
-      ${concatStrings (
-        map (zone: ''
-      if [[ ! -f /var/lib/bind/${zone}zone ]]; then
-        cp "${templateFile}" "/var/lib/bind/${zone}zone"
-      fi
-      chmod 0644 "/var/lib/bind/${zone}zone"
-      chown named "/var/lib/bind/${zone}zone"
-        '') dynamicZones
-      )}
-  '';
-    serviceConfig = {
-      Type = "oneshot";
-      User = "root";
-      RemainAfterExit = true;
-    };
-  };
-
   services.bind = {
     enable = true;
     cacheNetworks = [
@@ -71,7 +49,6 @@ in
       }
     ] ++ (map mkDynamicZone dynamicZones);
   };
-
   networking.firewall.allowedUDPPorts = [ 53 ];
   networking.firewall.allowedTCPPorts = [ 53 ];
 }
