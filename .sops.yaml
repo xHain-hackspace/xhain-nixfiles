@@ -6,7 +6,7 @@ keys:
   - &machine_router age139t43h3ey5zn2uj5wh42upzzfqv9m5x6rwdy3g29n77yr5kwadns4n5xcs
 
 creation_rules:
-  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: (secrets|terraform)/[^/]+\.(yaml|json|env|ini|tfvars)$
     key_groups:
       - age:
           - *danimo
