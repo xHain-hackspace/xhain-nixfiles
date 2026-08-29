@@ -1,13 +1,16 @@
-{ lib, config, pkgs, ... }:
-
 {
+  lib,
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     ./nginx
     ./snmp
     ./prometheus
   ];
 
-  nixpkgs.config.packageOverrides = import ../../../pkgs { inherit pkgs lib; };
+  nixpkgs.config.packageOverrides = import ../../../pkgs {inherit pkgs lib;};
 
   boot.kernelPackages = lib.mkOverride 1001 pkgs.linuxPackages_latest;
 
@@ -25,7 +28,7 @@
   security.sudo.wheelNeedsPassword = false;
 
   nix.gc.automatic = lib.mkDefault true;
-  nix.settings.trusted-users = [ "root" "@wheel" ];
+  nix.settings.trusted-users = ["root" "@wheel"];
 
   environment.systemPackages = with pkgs; [
     htop
@@ -45,7 +48,7 @@
     enable = true;
     ohMyZsh = {
       enable = true;
-      plugins = [ ];
+      plugins = [];
       theme = "risto";
     };
   };

@@ -14,10 +14,20 @@
     flakelight.url = "github:nix-community/flakelight";
     flakelight.inputs.nixpkgs.follows = "nixpkgs";
   };
-  outputs = { nixpkgs, sops-nix, kea-lease-viewer, flakelight, ... }@inputs:
+  outputs = {
+    nixpkgs,
+    sops-nix,
+    kea-lease-viewer,
+    flakelight,
+    ...
+  } @ inputs:
     flakelight ./. {
       inputs.nixpkgs = nixpkgs;
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
       flakelight.builtinFormatters = false;
       devShell = {
         packages = pkgs: [
@@ -26,11 +36,10 @@
           pkgs.colmena
           pkgs.sops
           pkgs.opentofu
-#          pkgs.prometheus-snmp-exporter
+          #          pkgs.prometheus-snmp-exporter
         ];
         env.DIRENV_LOG_FORMAT = "";
       };
-
 
       checks = import ./checks inputs;
 
@@ -39,13 +48,20 @@
           meta = {
             nixpkgs = import nixpkgs {
               system = "x86_64-linux";
-              config = { allowUnfree = true; };
-              overlays = [ (final: prev: import ./pkgs final prev) ];
+              config = {
+                allowUnfree = true;
+              };
+              overlays = [(final: prev: import ./pkgs final prev)];
             };
-            specialArgs.inputs = { inherit sops-nix kea-lease-viewer; };
+            specialArgs.inputs = {inherit sops-nix kea-lease-viewer;};
           };
 
-          defaults = { config, lib, name, ... }: {
+          defaults = {
+            config,
+            lib,
+            name,
+            ...
+          }: {
             imports = [
               (./. + "/hosts/${name}/configuration.nix")
             ];
@@ -53,20 +69,19 @@
             deployment.targetUser = null;
           };
 
-          router = { ... }: {
+          router = {...}: {
             deployment.targetHost = "router.xhain.space";
             imports = [
-             kea-lease-viewer.nixosModules.default
-  ]         ;
+              kea-lease-viewer.nixosModules.default
+            ];
           };
 
-          files = { ... }: {
+          files = {...}: {
             deployment.targetHost = "files.xhain.space";
           };
 
-          nix-builder = { ... }: { };
+          nix-builder = {...}: {};
         };
       };
     };
-
 }

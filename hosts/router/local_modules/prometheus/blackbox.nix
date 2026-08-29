@@ -1,10 +1,8 @@
-{ config, ... }:
-
-{
+{config, ...}: {
   services.prometheus.exporters.blackbox = {
     enable = true;
     listenAddress = "127.0.0.1";
-    configFile = "${ ./blackbox-exporter.yml }";
+    configFile = "${./blackbox-exporter.yml}";
   };
 
   services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} = let

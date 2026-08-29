@@ -1,9 +1,6 @@
-{ config, ... }:
-
-let
+{config, ...}: let
   port = 51820;
-in
-{
+in {
   sops.secrets.wireguard.owner = "systemd-network";
 
   systemd.network = {

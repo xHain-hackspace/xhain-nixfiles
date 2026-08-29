@@ -1,11 +1,9 @@
 pkgs:
 pkgs.testers.runNixOSTest {
   name = "bind service";
-  nodes.machine =
-    { pkgs, ... }:
-    {
-      imports = [ ../hosts/router/dns.nix ];
-    };
+  nodes.machine = {pkgs, ...}: {
+    imports = [../hosts/router/dns.nix];
+  };
 
   testScript = ''
     start_all()

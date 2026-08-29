@@ -1,6 +1,4 @@
-{ config, ... }:
-
-{
+{config, ...}: {
   imports = [
     ./iperf3-exporter.nix
     ./node.nix
@@ -8,14 +6,12 @@
     ./blackbox.nix
   ];
 
-  services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} =
-    let
-      addr = config.services.prometheus.listenAddress;
-      port = toString config.services.prometheus.port;
-    in
-    {
-      locations."/prometheus/".proxyPass = "http://${addr}:${port}/";
-    };
+  services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} = let
+    addr = config.services.prometheus.listenAddress;
+    port = toString config.services.prometheus.port;
+  in {
+    locations."/prometheus/".proxyPass = "http://${addr}:${port}/";
+  };
 
   sops.secrets.homeassistant_token.owner = "prometheus";
 
@@ -28,177 +24,175 @@
     ];
     listenAddress = "127.0.0.1";
     globalConfig.scrape_interval = "15s";
-    scrapeConfigs =
-      let
-        removePort = [
-          {
-            source_labels = [ "__address__" ];
-            target_label = "instance";
-            regex = "^(.*):?\\d*";
-            action = "replace";
-          }
-        ];
-        rewriteToLocal = [
-          {
-            source_labels = [ "__address__" ];
-            target_label = "__param_target";
-          }
-          {
-            source_labels = [ "__param_target" ];
-            target_label = "instance";
-          }
-          {
-            replacement = "${config.networking.hostName + "." + config.networking.domain}";
-            target_label = "__address__";
-          }
-        ];
-      in
-      [
-        # {
-        #   job_name = "iperf3-meta";
-        #   scheme = "https";
-        #   metrics_path = "/iperf3-exporter/metrics";
-        #   relabel_configs = removePort;
-        #   static_configs = [{ targets = [ "${config.networking.hostName + "." + config.networking.domain}"]; }];
-        # }
-        # {
-        #   job_name = "iperf3";
-        #   scheme = "https";
-        #   metrics_path = "/iperf3-exporter/probe";
-        #   relabel_configs = rewriteToLocal;
-        #   static_configs = [{ targets = [ "speedtest.wobcom.de"]; }];
-        #   scrape_interval = "600s";
-        #   scrape_timeout = "30s";
-        # }
-        # {
-        #   job_name = "iperf3-download";
-        #   scheme = "https";
-        #   params = { "reverse" = [ "true" ]; };
-        #   metrics_path = "/iperf3-exporter/probe";
-        #   relabel_configs = rewriteToLocal;
-        #   static_configs = [{ targets = [ "speedtest.wobcom.de"]; }];
-        #   scrape_interval = "600s";
-        #   scrape_timeout = "30s";
-        # }
+    scrapeConfigs = let
+      removePort = [
         {
-          job_name = "node";
-          scheme = "https";
-          metrics_path = "node-exporter/metrics";
-          relabel_configs = removePort;
-          static_configs = [
-            { targets = [ "${config.networking.hostName + "." + config.networking.domain}" ]; }
-          ];
-        }
-        {
-          job_name = "wireguard";
-          scheme = "https";
-          metrics_path = "wireguard-exporter/metrics";
-          relabel_configs = removePort;
-          static_configs = [
-            { targets = [ "${config.networking.hostName + "." + config.networking.domain}" ]; }
-          ];
-        }
-        {
-          job_name = "snmp";
-          scheme = "https";
-          metrics_path = "snmp-exporter/metrics";
-          relabel_configs = removePort;
-          static_configs = [
-            { targets = [ "${config.networking.hostName + "." + config.networking.domain}" ]; }
-          ];
-        }
-        {
-          job_name = "prometheus";
-          scheme = "https";
-          metrics_path = "prometheus/metrics";
-          relabel_configs = removePort;
-          static_configs = [
-            { targets = [ "${config.networking.hostName + "." + config.networking.domain}" ]; }
-          ];
-        }
-        {
-          job_name = "blackbox";
-          scheme = "https";
-          metrics_path = "blackbox-exporter/metrics";
-          relabel_configs = removePort;
-          static_configs = [
-            { targets = [ "${config.networking.hostName + "." + config.networking.domain}" ]; }
-          ];
-        }
-        {
-          job_name = "aruba";
-          scheme = "https";
-          metrics_path = "/snmp-exporter/snmp";
-          params = {
-            module = [ "aruba" ];
-          };
-          relabel_configs = rewriteToLocal;
-          static_configs = [ { targets = [ "wifi.xhain.space" ]; } ];
-        }
-        {
-          job_name = "switches";
-          scheme = "https";
-          metrics_path = "/snmp-exporter/snmp";
-          params = {
-            module = [ "if_mib" ];
-          };
-          relabel_configs = rewriteToLocal;
-          static_configs = [
-            {
-              targets = [
-                "sw-core.xhain.space"
-                "sw-g16-main.xhain.space"
-                "sw-g16-rack.xhain.space"
-                "sw-g16-basement.xhain.space"
-                "sw-g16-backdoor.xhain.space"
-                "sw-g18.xhain.space"
-                "sw-g20.xhain.space"
-              ];
-            }
-          ];
-        }
-        {
-          job_name = "blackbox-icmp";
-          scheme = "https";
-          metrics_path = "/blackbox-exporter/probe";
-          params = {
-            module = [ "icmp" ];
-          };
-          relabel_configs = rewriteToLocal;
-          static_configs = [
-            {
-              targets = [
-                "sw-core.xhain.space"
-                "sw-g16-main.xhain.space"
-                "sw-g16-rack.xhain.space"
-                "sw-g16-basement.xhain.space"
-                "sw-g16-backdoor.xhain.space"
-                "ap-g16-door.xhain.space"
-                "ap-g16-treehouse.xhain.space"
-                "ap-g16-basement.xhain.space"
-                "ap-g18-front.xhain.space"
-                "ap-g18-back.xhain.space"
-                "ap-g20.xhain.space"
-                "xdoor.lan.xhain.space"
-                "45.158.40.1"
-                "x-hain.de"
-              ];
-            }
-          ];
-        }
-        {
-          job_name = "homeassistant";
-          scheme = "http";
-          metrics_path = "/api/prometheus";
-          bearer_token_file = config.sops.secrets.homeassistant_token.path;
-          static_configs = [
-            {
-              targets = [
-                "automation.lan.xhain.space"
-              ];
-            }
-          ];
+          source_labels = ["__address__"];
+          target_label = "instance";
+          regex = "^(.*):?\\d*";
+          action = "replace";
         }
       ];
+      rewriteToLocal = [
+        {
+          source_labels = ["__address__"];
+          target_label = "__param_target";
+        }
+        {
+          source_labels = ["__param_target"];
+          target_label = "instance";
+        }
+        {
+          replacement = "${config.networking.hostName + "." + config.networking.domain}";
+          target_label = "__address__";
+        }
+      ];
+    in [
+      # {
+      #   job_name = "iperf3-meta";
+      #   scheme = "https";
+      #   metrics_path = "/iperf3-exporter/metrics";
+      #   relabel_configs = removePort;
+      #   static_configs = [{ targets = [ "${config.networking.hostName + "." + config.networking.domain}"]; }];
+      # }
+      # {
+      #   job_name = "iperf3";
+      #   scheme = "https";
+      #   metrics_path = "/iperf3-exporter/probe";
+      #   relabel_configs = rewriteToLocal;
+      #   static_configs = [{ targets = [ "speedtest.wobcom.de"]; }];
+      #   scrape_interval = "600s";
+      #   scrape_timeout = "30s";
+      # }
+      # {
+      #   job_name = "iperf3-download";
+      #   scheme = "https";
+      #   params = { "reverse" = [ "true" ]; };
+      #   metrics_path = "/iperf3-exporter/probe";
+      #   relabel_configs = rewriteToLocal;
+      #   static_configs = [{ targets = [ "speedtest.wobcom.de"]; }];
+      #   scrape_interval = "600s";
+      #   scrape_timeout = "30s";
+      # }
+      {
+        job_name = "node";
+        scheme = "https";
+        metrics_path = "node-exporter/metrics";
+        relabel_configs = removePort;
+        static_configs = [
+          {targets = ["${config.networking.hostName + "." + config.networking.domain}"];}
+        ];
+      }
+      {
+        job_name = "wireguard";
+        scheme = "https";
+        metrics_path = "wireguard-exporter/metrics";
+        relabel_configs = removePort;
+        static_configs = [
+          {targets = ["${config.networking.hostName + "." + config.networking.domain}"];}
+        ];
+      }
+      {
+        job_name = "snmp";
+        scheme = "https";
+        metrics_path = "snmp-exporter/metrics";
+        relabel_configs = removePort;
+        static_configs = [
+          {targets = ["${config.networking.hostName + "." + config.networking.domain}"];}
+        ];
+      }
+      {
+        job_name = "prometheus";
+        scheme = "https";
+        metrics_path = "prometheus/metrics";
+        relabel_configs = removePort;
+        static_configs = [
+          {targets = ["${config.networking.hostName + "." + config.networking.domain}"];}
+        ];
+      }
+      {
+        job_name = "blackbox";
+        scheme = "https";
+        metrics_path = "blackbox-exporter/metrics";
+        relabel_configs = removePort;
+        static_configs = [
+          {targets = ["${config.networking.hostName + "." + config.networking.domain}"];}
+        ];
+      }
+      {
+        job_name = "aruba";
+        scheme = "https";
+        metrics_path = "/snmp-exporter/snmp";
+        params = {
+          module = ["aruba"];
+        };
+        relabel_configs = rewriteToLocal;
+        static_configs = [{targets = ["wifi.xhain.space"];}];
+      }
+      {
+        job_name = "switches";
+        scheme = "https";
+        metrics_path = "/snmp-exporter/snmp";
+        params = {
+          module = ["if_mib"];
+        };
+        relabel_configs = rewriteToLocal;
+        static_configs = [
+          {
+            targets = [
+              "sw-core.xhain.space"
+              "sw-g16-main.xhain.space"
+              "sw-g16-rack.xhain.space"
+              "sw-g16-basement.xhain.space"
+              "sw-g16-backdoor.xhain.space"
+              "sw-g18.xhain.space"
+              "sw-g20.xhain.space"
+            ];
+          }
+        ];
+      }
+      {
+        job_name = "blackbox-icmp";
+        scheme = "https";
+        metrics_path = "/blackbox-exporter/probe";
+        params = {
+          module = ["icmp"];
+        };
+        relabel_configs = rewriteToLocal;
+        static_configs = [
+          {
+            targets = [
+              "sw-core.xhain.space"
+              "sw-g16-main.xhain.space"
+              "sw-g16-rack.xhain.space"
+              "sw-g16-basement.xhain.space"
+              "sw-g16-backdoor.xhain.space"
+              "ap-g16-door.xhain.space"
+              "ap-g16-treehouse.xhain.space"
+              "ap-g16-basement.xhain.space"
+              "ap-g18-front.xhain.space"
+              "ap-g18-back.xhain.space"
+              "ap-g20.xhain.space"
+              "xdoor.lan.xhain.space"
+              "45.158.40.1"
+              "x-hain.de"
+            ];
+          }
+        ];
+      }
+      {
+        job_name = "homeassistant";
+        scheme = "http";
+        metrics_path = "/api/prometheus";
+        bearer_token_file = config.sops.secrets.homeassistant_token.path;
+        static_configs = [
+          {
+            targets = [
+              "automation.lan.xhain.space"
+            ];
+          }
+        ];
+      }
+    ];
   };
 }

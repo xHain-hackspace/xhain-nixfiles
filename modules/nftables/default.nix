@@ -1,17 +1,23 @@
-{ pkgs, lib, config, modulesPath, ... }:
-
-let
+{
+  pkgs,
+  lib,
+  config,
+  modulesPath,
+  ...
+}: let
   fwcfg = config.networking.firewall;
   cfg = config.nftables;
 
   doDocker = config.virtualisation.docker.enable && cfg.generateDockerRules;
 
   mkPorts = cond: ports: ranges: action: let
-    portStrings = (map (range: "${toString range.from}-${toString range.to}") ranges)
-               ++ (map toString ports);
-  in lib.optionalString (portStrings != []) ''
-    ${cond} dport { ${lib.concatStringsSep ", " portStrings} } ${action}
-  '';
+    portStrings =
+      (map (range: "${toString range.from}-${toString range.to}") ranges)
+      ++ (map toString ports);
+  in
+    lib.optionalString (portStrings != []) ''
+      ${cond} dport { ${lib.concatStringsSep ", " portStrings} } ${action}
+    '';
 
   ruleset = ''
     table inet filter {
@@ -26,18 +32,20 @@ let
         ct state established,related accept
 
         iifname { ${
-          lib.concatStringsSep "," (["lo"] ++ fwcfg.trustedInterfaces)
-        } } accept
+      lib.concatStringsSep "," (["lo"] ++ fwcfg.trustedInterfaces)
+    } } accept
 
         ${mkPorts "tcp" fwcfg.allowedTCPPorts fwcfg.allowedTCPPortRanges "accept"}
         ${mkPorts "udp" fwcfg.allowedUDPPorts fwcfg.allowedUDPPortRanges "accept"}
 
         ${
-          lib.concatStringsSep "\n" (lib.mapAttrsToList (name: ifcfg:
-              mkPorts "iifname ${name} tcp" ifcfg.allowedTCPPorts ifcfg.allowedTCPPortRanges "accept"
+      lib.concatStringsSep "\n" (lib.mapAttrsToList (
+          name: ifcfg:
+            mkPorts "iifname ${name} tcp" ifcfg.allowedTCPPorts ifcfg.allowedTCPPortRanges "accept"
             + mkPorts "iifname ${name} udp" ifcfg.allowedUDPPorts ifcfg.allowedUDPPortRanges "accept"
-          ) fwcfg.interfaces)
-        }
+        )
+        fwcfg.interfaces)
+    }
 
         # DHCPv6
         ip6 daddr fe80::/64 udp dport 546 accept
@@ -59,10 +67,10 @@ let
         policy ${cfg.forwardPolicy}
 
         ${lib.optionalString doDocker ''
-          oifname docker0 ct state invalid drop
-          oifname docker0 ct state established,related accept
-          iifname docker0 accept
-        ''}
+      oifname docker0 ct state invalid drop
+      oifname docker0 ct state established,related accept
+      iifname docker0 accept
+    ''}
 
         ${cfg.extraForward}
 
@@ -84,7 +92,6 @@ let
     name = "nftables-rules";
     text = ruleset;
   };
-
 in {
   options = with lib; {
     nftables = {
@@ -132,12 +139,12 @@ in {
   config = lib.mkIf cfg.enable {
     networking.firewall.enable = false;
 
-    environment.systemPackages = [ pkgs.nftables ];
+    environment.systemPackages = [pkgs.nftables];
     systemd.services.nftables = {
       description = "nftables firewall";
-      before = [ "network-pre.target" ];
-      wants = [ "network-pre.target" ];
-      wantedBy = [ "multi-user.target" ];
+      before = ["network-pre.target"];
+      wants = ["network-pre.target"];
+      wantedBy = ["multi-user.target"];
       reloadIfChanged = true;
       serviceConfig = let
         rulesScript = pkgs.writeScript "nftables-rules" ''
@@ -165,13 +172,17 @@ in {
             ${pkgs.iptables}/bin/ip6tables -F
             ${pkgs.iptables}/bin/ip6tables -X
           fi
-          ${if cfg.needIptables then ''
-            ${pkgs.kmod}/bin/modprobe iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables
-            ${pkgs.kmod}/bin/modprobe ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables
-          '' else ''
-            ${pkgs.kmod}/bin/rmmod iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables || true
-            ${pkgs.kmod}/bin/rmmod ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables || true
-          ''}
+          ${
+            if cfg.needIptables
+            then ''
+              ${pkgs.kmod}/bin/modprobe iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables
+              ${pkgs.kmod}/bin/modprobe ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables
+            ''
+            else ''
+              ${pkgs.kmod}/bin/rmmod iptable_filter iptable_mangle iptable_nat iptable_raw iptable_security ip_tables || true
+              ${pkgs.kmod}/bin/rmmod ip6table_filter ip6table_mangle ip6table_nat ip6table_raw ip6table_security ip6_tables || true
+            ''
+          }
           ${rulesScript}
         '';
       in {

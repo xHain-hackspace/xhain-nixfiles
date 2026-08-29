@@ -1,8 +1,9 @@
-{ pkgs, lib, ... }:
-
-with lib;
-
-let
+{
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   templateFile = pkgs.writeText "template.zone" ''
     $TTL 3600
     @               IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021112802 7200 900 1209600 86400
@@ -16,31 +17,31 @@ let
   mkDynamicZone = name: {
     inherit name;
     master = true;
-    slaves = [ "127.0.0.1" "::1" ];
+    slaves = ["127.0.0.1" "::1"];
     file = "/var/lib/bind/${name}zone";
     extraConfig = ''
       allow-update { key "rndc-key"; };
       journal "/var/run/named/${name}zone.jnl";
     '';
   };
-in
-{
+in {
   systemd.services."bind-create-dynamic-zones" = {
-    before = [ "bind.service" ];
-    wantedBy = [ "bind.service" ];
+    before = ["bind.service"];
+    wantedBy = ["bind.service"];
     script = ''
-    mkdir -p /var/lib/bind
-    chown named /var/lib/bind
-      ${concatStrings (
+      mkdir -p /var/lib/bind
+      chown named /var/lib/bind
+        ${concatStrings (
         map (zone: ''
-      if [[ ! -f /var/lib/bind/${zone}zone ]]; then
-        cp "${templateFile}" "/var/lib/bind/${zone}zone"
-      fi
-      chmod 0644 "/var/lib/bind/${zone}zone"
-      chown named "/var/lib/bind/${zone}zone"
-        '') dynamicZones
+          if [[ ! -f /var/lib/bind/${zone}zone ]]; then
+            cp "${templateFile}" "/var/lib/bind/${zone}zone"
+          fi
+          chmod 0644 "/var/lib/bind/${zone}zone"
+          chown named "/var/lib/bind/${zone}zone"
+        '')
+        dynamicZones
       )}
-  '';
+    '';
     serviceConfig = {
       Type = "oneshot";
       User = "root";
@@ -62,16 +63,18 @@ in
       "10.73.243.0/24"
       "2a0f:5382:acab:1323::/64"
     ];
-    zones = [
-      {
-        name = "xhain.space.";
-        master = true;
-        slaves = [ "127.0.0.1" "::1" ];
-        file = ./xhain.space.zone;
-      }
-    ] ++ (map mkDynamicZone dynamicZones);
+    zones =
+      [
+        {
+          name = "xhain.space.";
+          master = true;
+          slaves = ["127.0.0.1" "::1"];
+          file = ./xhain.space.zone;
+        }
+      ]
+      ++ (map mkDynamicZone dynamicZones);
   };
 
-  networking.firewall.allowedUDPPorts = [ 53 ];
-  networking.firewall.allowedTCPPorts = [ 53 ];
+  networking.firewall.allowedUDPPorts = [53];
+  networking.firewall.allowedTCPPorts = [53];
 }

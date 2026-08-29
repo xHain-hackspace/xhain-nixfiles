@@ -1,6 +1,9 @@
-{ config, pkgs, name, ... }:
-
 {
+  config,
+  pkgs,
+  name,
+  ...
+}: {
   imports = [
     ../../modules/proxmox_server
     ../../modules/rollback
@@ -11,29 +14,37 @@
     hostName = name;
     domain = "xhain.space";
 
-    nameservers = [ "192.168.42.1" ];
-    defaultGateway = { address = "192.168.42.1"; interface = "eth0"; };
+    nameservers = ["192.168.42.1"];
+    defaultGateway = {
+      address = "192.168.42.1";
+      interface = "eth0";
+    };
 
     interfaces.eth0 = {
       useDHCP = false;
-      ipv4.addresses = [{ address = "192.168.42.2"; prefixLength = 23; }];
+      ipv4.addresses = [
+        {
+          address = "192.168.42.2";
+          prefixLength = 23;
+        }
+      ];
     };
   };
   environment.systemPackages = with pkgs; [
   ];
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [80 443];
   services.nginx = {
     enable = true;
     virtualHosts."files.xhain.space" = {
       root = "/media/storage";
       extraConfig = ''
-      autoindex on;
+        autoindex on;
       '';
     };
   };
 
-  users.groups.samba = { };
+  users.groups.samba = {};
 
   system.activationScripts.permissions = ''
     chown root:samba /media/storage
@@ -45,7 +56,7 @@
     openFirewall = true;
     securityType = "user";
 
-    settings.global = { 
+    settings.global = {
       "server string" = "Files";
       "map to guest" = "Bad User";
       "passdb backend" = "tdbsam";
@@ -65,7 +76,7 @@
     };
   };
 
-  networking.firewall.allowedUDPPorts = [ 69 ];
+  networking.firewall.allowedUDPPorts = [69];
   services.atftpd = {
     enable = true;
     root = "/srv/tftp";

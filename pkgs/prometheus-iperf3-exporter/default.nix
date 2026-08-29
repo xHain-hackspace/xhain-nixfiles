@@ -1,5 +1,10 @@
-{ stdenv, lib, buildGoPackage, fetchFromGitHub, nixosTests }:
-
+{
+  stdenv,
+  lib,
+  buildGoPackage,
+  fetchFromGitHub,
+  nixosTests,
+}:
 buildGoPackage rec {
   pname = "prometheus-iperf3-exporter";
   version = "master";
@@ -17,7 +22,7 @@ buildGoPackage rec {
     description = "The iPerf3 exporter allows iPerf3 probing of endpoints";
     homepage = "https://github.com/fluepke/iperf3-exporter";
     license = licenses.asl20;
-    maintainers = with maintainers; [ fluepke ];
+    maintainers = with maintainers; [fluepke];
     platforms = platforms.linux;
   };
 }

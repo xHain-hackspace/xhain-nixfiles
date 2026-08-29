@@ -1,7 +1,5 @@
-{ config, ... }:
-
-{
-  users.users.nginx.extraGroups = [ "acme" ];
+{config, ...}: {
+  users.users.nginx.extraGroups = ["acme"];
   users.users.nginx.isSystemUser = true;
   security.acme = {
     defaults.email = "acme@x-hain.de";

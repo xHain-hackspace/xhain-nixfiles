@@ -1,10 +1,8 @@
-{ config, ... }:
-
-{
+{config, ...}: {
   services.prometheus.exporters.node = {
     enable = true;
     listenAddress = "127.0.0.1";
-    enabledCollectors = [ "systemd" ];
+    enabledCollectors = ["systemd"];
   };
 
   services.nginx.virtualHosts.${config.networking.hostName + "." + config.networking.domain} = let

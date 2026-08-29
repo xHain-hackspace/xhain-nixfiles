@@ -1,6 +1,12 @@
-{ config, pkgs, lib, name, inputs, modulesPath, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  name,
+  inputs,
+  modulesPath,
+  ...
+}: {
   imports = [
     (modulesPath + "/virtualisation/proxmox-lxc.nix")
     inputs.sops-nix.nixosModules.sops
@@ -25,14 +31,14 @@
   security = {
     sudo.wheelNeedsPassword = false;
     pam.sshAgentAuth.enable = true;
-};
+  };
 
   nix.gc.automatic = true;
   nix.gc.dates = lib.mkDefault "weekly";
 
-  nix.settings.trusted-users = [ "root" "@wheel" ];
+  nix.settings.trusted-users = ["root" "@wheel"];
 
-  sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+  sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
   i18n = {
     supportedLocales = [

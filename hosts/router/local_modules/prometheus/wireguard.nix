@@ -1,6 +1,4 @@
-{ config, ... }:
-
-{
+{config, ...}: {
   services.prometheus.exporters.wireguard = {
     enable = true;
     listenAddress = "127.0.0.1";

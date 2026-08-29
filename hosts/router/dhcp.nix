@@ -4,9 +4,7 @@
   lib,
   inputs,
   ...
-}:
-
-let
+}: let
   subnets = {
     lan = {
       id = 1;
@@ -41,7 +39,7 @@ let
   mkKeaSubnet = name: attrs: {
     id = attrs.id;
     subnet = attrs.subnet;
-    pools = [ { pool = attrs.dhcp_range; } ];
+    pools = [{pool = attrs.dhcp_range;}];
     ddns-qualifying-suffix = attrs.ddns_domain;
     option-data = [
       {
@@ -69,13 +67,12 @@ let
             "name": "${attrs.ddns_domain}"
           }'';
   controlSocket = "/run/kea/dhcp4.sock";
-in
-{
+in {
   users.users.kea = {
     isSystemUser = true;
     group = "kea";
   };
-  users.groups.kea = { };
+  users.groups.kea = {};
 
   sops.secrets.kea-ddns-key = {
     owner = "kea";
@@ -156,7 +153,7 @@ in
         hooks-libraries = [
           {
             library = "${pkgs.kea}/lib/kea/hooks/libdhcp_lease_cmds.so";
-            parameters = { };
+            parameters = {};
           }
         ];
 

@@ -1,5 +1,4 @@
-{ ... } :
-{
+{...}: {
   imports = [
     ../users/danimo.nix
     ../users/lenny.nix
