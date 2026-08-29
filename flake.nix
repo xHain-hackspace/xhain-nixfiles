@@ -25,6 +25,7 @@
           pkgs.git
           pkgs.colmena
           pkgs.sops
+          pkgs.opentofu
 #          pkgs.prometheus-snmp-exporter
         ];
         env.DIRENV_LOG_FORMAT = "";

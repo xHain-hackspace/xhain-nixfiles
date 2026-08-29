@@ -1,5 +1,5 @@
 init:
-	terraform init --upgrade
+	tofu init --upgrade
 
 apply: 
-	terraform apply -var-file=secrets.tfvars
+	tofu apply --var-file=<(sops -d secrets.tfvars)

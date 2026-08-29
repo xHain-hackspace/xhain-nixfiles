@@ -2,9 +2,13 @@ variable "token" {
   description = "Proxmox API access token"
 }
 
+variable "token_id" {
+  description = "Proxmox API access token ID"
+}
+
 provider "proxmox" {
   pm_api_url          = "https://pve.xhain.space:8006/api2/json"
-  pm_api_token_id     = "terraform@pve!terraform"
+  pm_api_token_id     = var.token_id
   pm_api_token_secret = var.token
 }
 
@@ -126,7 +130,7 @@ resource "proxmox_lxc" "files" {
     slot    = 0
     storage = "local-zfs"
     mp      = "/media/storage"
-    size    = "1T"
+    size    = "1624G"
   }
 
   network {
@@ -141,3 +145,4 @@ resource "proxmox_lxc" "files" {
     nesting = true
   }
 }
+
