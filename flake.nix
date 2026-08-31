@@ -32,6 +32,7 @@
       treefmtConfig = {
         programs.nixfmt.enable = true;
         programs.terraform.enable = true;
+        settings.global.excludes = [ "terraform/secrets.tfvars" ];
       };
       flakelight.builtinFormatters = false;
       systems = [
@@ -46,7 +47,7 @@
           pkgs.colmena
           pkgs.sops
           pkgs.opentofu
-#          pkgs.prometheus-snmp-exporter
+          # pkgs.prometheus-snmp-exporter
         ];
         env.DIRENV_LOG_FORMAT = "";
       };
