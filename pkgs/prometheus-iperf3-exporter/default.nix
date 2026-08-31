@@ -1,4 +1,10 @@
-{ stdenv, lib, buildGoPackage, fetchFromGitHub, nixosTests }:
+{
+  stdenv,
+  lib,
+  buildGoPackage,
+  fetchFromGitHub,
+  nixosTests,
+}:
 
 buildGoPackage rec {
   pname = "prometheus-iperf3-exporter";

@@ -1,5 +1,4 @@
 ---
-
 modules:
   icmp:
     prober: icmp
@@ -13,7 +12,7 @@ modules:
     timeout: 3s
     tcp:
       query_response:
-      - expect: "^SSH-2.0-"
+        - expect: "^SSH-2.0-"
 
   https:
     prober: http

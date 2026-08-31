@@ -1,10 +1,16 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.services.iperf3-exporter;
-in {
+in
+{
   options = {
     services.iperf3-exporter = {
       enable = mkEnableOption "Enable iperf3 prometheus exporter";
@@ -12,15 +18,30 @@ in {
         type = types.str;
         default = "[::1]:9579";
       };
-      iperf3OmitTime = mkOption { type = types.str; default = "5s"; };
-      iperf3Mss = mkOption { type = types.int; default = 1400; };
-      iperf3Path = mkOption { type = types.str; default = "${pkgs.iperf3}/bin/iperf3"; };
-      iperf3Time = mkOption { type = types.str; default = "10s"; };
-      iperf3Timeout = mkOption { type = types.str; default = "30s"; };
+      iperf3OmitTime = mkOption {
+        type = types.str;
+        default = "5s";
+      };
+      iperf3Mss = mkOption {
+        type = types.int;
+        default = 1400;
+      };
+      iperf3Path = mkOption {
+        type = types.str;
+        default = "${pkgs.iperf3}/bin/iperf3";
+      };
+      iperf3Time = mkOption {
+        type = types.str;
+        default = "10s";
+      };
+      iperf3Timeout = mkOption {
+        type = types.str;
+        default = "30s";
+      };
     };
   };
   config = mkIf cfg.enable {
-    services.iperf3-exporter = {};
+    services.iperf3-exporter = { };
 
     systemd.services.iperf3-exporter = {
       description = "iperf3 prometheus exporter";

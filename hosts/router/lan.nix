@@ -10,42 +10,78 @@
 
   systemd.network.wait-online.ignoredInterfaces = [ "enp6s0f4" ];
 
-  networking.vlans.intern = { interface = "enp6s0f4"; id = 42; };
-  networking.vlans.hosting = { interface = "enp6s0f4"; id = 37; };
-  networking.vlans.guest = { interface = "enp6s0f4"; id = 12; };
-  networking.vlans.voc = { interface = "enp6s0f4"; id = 23; };
+  networking.vlans.intern = {
+    interface = "enp6s0f4";
+    id = 42;
+  };
+  networking.vlans.hosting = {
+    interface = "enp6s0f4";
+    id = 37;
+  };
+  networking.vlans.guest = {
+    interface = "enp6s0f4";
+    id = 12;
+  };
+  networking.vlans.voc = {
+    interface = "enp6s0f4";
+    id = 23;
+  };
 
   networking.interfaces.intern = {
     ipv4.addresses = [
-      { address = "192.168.42.1"; prefixLength = 23; }
+      {
+        address = "192.168.42.1";
+        prefixLength = 23;
+      }
     ];
     ipv6.addresses = [
-      { address = "2a0f:5382:acab:1342::1"; prefixLength = 64; }
+      {
+        address = "2a0f:5382:acab:1342::1";
+        prefixLength = 64;
+      }
     ];
   };
   networking.interfaces.hosting = {
     ipv4.addresses = [
-      { address = "45.158.40.193"; prefixLength = 26; }
+      {
+        address = "45.158.40.193";
+        prefixLength = 26;
+      }
     ];
     ipv6.addresses = [
-      { address = "2a0f:5382:acab:1337::1"; prefixLength = 64; }
+      {
+        address = "2a0f:5382:acab:1337::1";
+        prefixLength = 64;
+      }
     ];
   };
   networking.interfaces.guest = {
     ipv4.addresses = [
-      { address = "192.168.12.1"; prefixLength = 23; }
+      {
+        address = "192.168.12.1";
+        prefixLength = 23;
+      }
     ];
     ipv6.addresses = [
-      { address = "2a0f:5382:acab:1312::1"; prefixLength = 64; }
+      {
+        address = "2a0f:5382:acab:1312::1";
+        prefixLength = 64;
+      }
     ];
   };
 
   networking.interfaces.voc = {
     ipv4.addresses = [
-      { address = "10.73.243.1"; prefixLength = 24; }
+      {
+        address = "10.73.243.1";
+        prefixLength = 24;
+      }
     ];
     ipv6.addresses = [
-      { address = "2a0f:5382:acab:1323::1"; prefixLength = 64; }
+      {
+        address = "2a0f:5382:acab:1323::1";
+        prefixLength = 64;
+      }
     ];
   };
 
@@ -82,7 +118,6 @@
       };
     '';
   };
-
 
   nftables =
     let
