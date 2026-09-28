@@ -146,7 +146,7 @@
           static_configs = [
             {
               targets = [
-                "sw-backbone.xhain.space"
+                "sw-core.xhain.space"
                 "sw-g16-main.xhain.space"
                 "sw-g16-rack.xhain.space"
                 "sw-g16-basement.xhain.space"
