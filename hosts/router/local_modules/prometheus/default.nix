@@ -180,6 +180,8 @@
                 "ap-g18-back.xhain.space"
                 "ap-g20.xhain.space"
                 "xdoor.lan.xhain.space"
+                "xdoor-g18.lan.xhain.space"
+                "xdoor-g20.lan.xhain.space"
                 "45.158.40.1"
                 "x-hain.de"
               ];
