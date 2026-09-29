@@ -153,6 +153,8 @@
                 "sw-g16-backdoor.xhain.space"
                 "sw-g18.xhain.space"
                 "sw-g20.xhain.space"
+                "rl1-g16.xhain.space"
+                "rl1-g20.xhain.space"
               ];
             }
           ];
@@ -173,6 +175,10 @@
                 "sw-g16-rack.xhain.space"
                 "sw-g16-basement.xhain.space"
                 "sw-g16-backdoor.xhain.space"
+                "sw-g18.xhain.space"
+                "sw-g20.xhain.space"
+                "rl1-g16.xhain.space"
+                "rl1-g20.xhain.space"
                 "ap-g16-door.xhain.space"
                 "ap-g16-treehouse.xhain.space"
                 "ap-g16-basement.xhain.space"
