@@ -1,6 +1,5 @@
 {
   inputs = {
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     nixpkgs.url = "https://channels.nixos.org/nixos-26.05-small/nixexprs.tar.zst";
     sops-nix = {
       url = "github:Mic92/sops-nix";
