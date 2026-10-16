@@ -10,6 +10,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-index-database.url = "github:nix-community/nix-index-database";
+    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+
     flakelight.url = "github:nix-community/flakelight";
     flakelight.inputs.nixpkgs.follows = "nixpkgs";
     flakelight-treefmt.url = "github:m15a/flakelight-treefmt";
@@ -22,6 +25,7 @@
       sops-nix,
       kea-lease-viewer,
       flakelight,
+      nix-index-database,
       ...
     }@inputs:
     flakelight ./. {
@@ -71,11 +75,18 @@
               config,
               lib,
               name,
+              pkgs,
               ...
             }:
             {
               imports = [
                 (./. + "/hosts/${name}/configuration.nix")
+                nix-index-database.nixosModules.default
+                {
+                  programs.nix-index.package =
+                    nix-index-database.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-small-db;
+                  programs.nix-index-database.comma.enable = true;
+                }
               ];
               deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
               deployment.targetUser = null;
