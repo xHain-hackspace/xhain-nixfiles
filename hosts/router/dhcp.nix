@@ -14,6 +14,12 @@ let
       router = "192.168.42.1";
       dhcp_range = "192.168.42.30 - 192.168.43.254";
       ddns_domain = "lan.xhain.space.";
+      reservations = [
+        {
+          hw-address = "3c:84:27:fd:f8:b0";
+          hostname = "bambulab-a1";
+        }
+      ];
     };
     hosting = {
       id = 2;
