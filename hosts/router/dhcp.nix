@@ -48,6 +48,7 @@ let
     id = attrs.id;
     subnet = attrs.subnet;
     pools = [ { pool = attrs.dhcp_range; } ];
+    reservations = attrs.reservations or [ ];
     ddns-qualifying-suffix = attrs.ddns_domain;
     option-data = [
       {
