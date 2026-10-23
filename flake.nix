@@ -37,7 +37,6 @@
         programs.terraform.enable = true;
         settings.global.excludes = [ "terraform/secrets.tfvars" ];
       };
-      flakelight.builtinFormatters = false;
       systems = [
         "x86_64-linux"
         "aarch64-linux"
