@@ -10,6 +10,7 @@ provider "proxmox" {
   pm_api_url          = "https://pve.xhain.space:8006/api2/json"
   pm_api_token_id     = var.token_id
   pm_api_token_secret = var.token
+  pm_tls_insecure     = true
 }
 
 resource "proxmox_lxc" "tr33" {
@@ -146,3 +147,36 @@ resource "proxmox_lxc" "files" {
   }
 }
 
+resource "proxmox_lxc" "xphone" {
+  target_node  = "pve"
+  hostname     = "xphone"
+  ostemplate   = "local:vztmpl/nixos-base.tar.xz"
+  unprivileged = true
+  cores        = 2
+  onboot       = true
+  start        = true
+  memory       = 2048
+  cmode        = "console"
+  ostype       = "nixos"
+
+  rootfs {
+    storage = "local-zfs"
+    size    = "30G"
+  }
+
+  ssh_public_keys = <<-EOT
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkN6Gh946RDixD57F0DVCKDSWTgJWIdW5YXbokMXuwi
+  EOT
+
+  network {
+    name     = "eth0"
+    bridge   = "vmbr0"
+    ip       = "dhcp"
+    ip6      = "dhcp"
+    firewall = true
+  }
+
+  features {
+    nesting = true
+  }
+}
