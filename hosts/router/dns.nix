@@ -48,14 +48,6 @@ let
       journal "/var/run/named/${name}zone.jnl";
     '';
   };
-  # TODO: remove me once patch hits our channel
-  patched-bind = pkgs.bind.overrideAttrs (_: rec {
-    version = "9.20.30";
-    src = pkgs.fetchurl {
-      url = "https://downloads.isc.org/isc/bind9/${version}/bind-${version}.tar.xz";
-      hash = "sha256-nhRDpApyowJyy8MZbQIKay4mk3ERyD5Z4QHoLh47T+8=";
-    };
-  });
 in
 {
   options.xhain.dns.acmeHosts = mkOption {
@@ -112,7 +104,6 @@ in
 
       services.bind = {
         enable = true;
-        package = patched-bind;
         # our startup generated config files can't
         # by checked by https://github.com/NixOS/nixpkgs/pull/501959
         checkConfig = false;
