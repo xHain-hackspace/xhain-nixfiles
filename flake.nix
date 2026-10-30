@@ -28,6 +28,16 @@
       nix-index-database,
       ...
     }@inputs:
+    let
+      defaultModules = [
+        nix-index-database.nixosModules.default
+        ({ pkgs, ... }: {
+          programs.nix-index.package =
+            nix-index-database.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-small-db;
+          programs.nix-index-database.comma.enable = true;
+        })
+      ];
+    in
     flakelight ./. {
       inputs.self = self;
       inputs.nixpkgs = nixpkgs;
@@ -46,7 +56,6 @@
         packages = pkgs: [
           pkgs.alejandra
           pkgs.git
-          pkgs.colmena
           pkgs.sops
           pkgs.opentofu
           # pkgs.prometheus-snmp-exporter
@@ -56,59 +65,26 @@
 
       checks = import ./checks inputs;
 
-      outputs = {
-        colmena = {
-          meta = {
-            nixpkgs = import nixpkgs {
-              system = "x86_64-linux";
-              config = {
-                allowUnfree = true;
-              };
-              overlays = [ (final: prev: import ./pkgs final prev) ];
-            };
-            specialArgs.inputs = { inherit sops-nix kea-lease-viewer; };
-          };
+      nixosConfigurations.router = {
+        specialArgs.inputs = { inherit sops-nix kea-lease-viewer; };
 
-          defaults =
-            {
-              config,
-              lib,
-              name,
-              pkgs,
-              ...
-            }:
-            {
-              imports = [
-                (./. + "/hosts/${name}/configuration.nix")
-                nix-index-database.nixosModules.default
-                {
-                  programs.nix-index.package =
-                    nix-index-database.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-small-db;
-                  programs.nix-index-database.comma.enable = true;
-                }
-              ];
-              deployment.targetHost = lib.mkDefault "${name}.lan.xhain.space";
-              deployment.targetUser = null;
-            };
+        modules = defaultModules ++ [
+          ./hosts/router/configuration.nix
+          kea-lease-viewer.nixosModules.default
+        ];
+      };
+      nixosConfigurations.files = {
+        specialArgs.name = "files";
+        modules = defaultModules ++ [
+          ./hosts/files/configuration.nix
+        ];
+      };
 
-          router =
-            { ... }:
-            {
-              deployment.targetHost = "router.xhain.space";
-              imports = [
-                kea-lease-viewer.nixosModules.default
-              ];
-            };
-
-          files =
-            { ... }:
-            {
-              deployment.targetHost = "files.xhain.space";
-            };
-
-          nix-builder = { ... }: { };
-        };
+      nixosConfigurations.nix-builder = {
+        specialArgs.name = "nix-builder";
+        modules = defaultModules ++ [
+          ./hosts/nix-builder/configuration.nix
+        ];
       };
     };
-
 }
