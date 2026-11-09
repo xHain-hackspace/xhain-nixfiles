@@ -111,6 +111,38 @@ in {
             }
             {
               routingPolicyRuleConfig = {
+                From = "192.168.12.0/23";
+                Table = bgpTable;
+                Priority = 1290;
+                Family = "ipv4";
+              };
+            }
+            {
+              routingPolicyRuleConfig = {
+                From = "10.73.243.0/24";
+                Table = bgpTable;
+                Priority = 1290;
+                Family = "ipv4";
+              };
+            }
+            {
+              routingPolicyRuleConfig = {
+                From = "192.168.42.0/23";
+                Table = bgpTable;
+                Priority = 1290;
+                Family = "ipv4";
+              };
+            }
+            {
+              routingPolicyRuleConfig = {
+                From = "45.158.40.192/26";
+                Table = bgpTable;
+                Priority = 1390;
+                Family = "ipv4";
+              };
+            }
+            {
+              routingPolicyRuleConfig = {
                 From = "2a0f:5387:ffff::/48";
                 Table = bgpTable;
                 Priority = 1410;
