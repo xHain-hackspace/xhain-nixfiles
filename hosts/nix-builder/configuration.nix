@@ -7,6 +7,7 @@
 
 {
   imports = [
+    ./hardware-configuration.nix
     ../../modules/proxmox_server
     ../../modules/rollback
     ../../modules/groups/admins.nix
