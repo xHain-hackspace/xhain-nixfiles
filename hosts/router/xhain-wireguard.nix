@@ -1,44 +1,41 @@
-{ config, ... }:
-
-let
+{config, ...}: let
   firewallMark = 51829;
+  bgpTable = 208135;
 
-  mkNetdev =
-    {
-      name,
-      privateKeyFile,
-      listenPort,
-      peerPublicKey,
-      presharedKeyFile,
-      endpoint,
-    }:
-    {
-      netdevConfig = {
-        Name = name;
-        Kind = "wireguard";
-        MTUBytes = 1380;
-      };
-      wireguardConfig = {
-        PrivateKeyFile = privateKeyFile;
-        ListenPort = listenPort;
-        FirewallMark = firewallMark;
-      };
-      wireguardPeers = [
-        {
-          wireguardPeerConfig = {
-            PublicKey = peerPublicKey;
-            PresharedKeyFile = presharedKeyFile;
-            Endpoint = endpoint;
-            PersistentKeepalive = 25;
-            AllowedIPs = [
-              "0.0.0.0/0"
-              "::/0"
-            ];
-            RouteTable = "off";
-          };
-        }
-      ];
+  mkNetdev = {
+    name,
+    privateKeyFile,
+    listenPort,
+    peerPublicKey,
+    presharedKeyFile,
+    endpoint,
+  }: {
+    netdevConfig = {
+      Name = name;
+      Kind = "wireguard";
+      MTUBytes = 1380;
     };
+    wireguardConfig = {
+      PrivateKeyFile = privateKeyFile;
+      ListenPort = listenPort;
+      FirewallMark = firewallMark;
+    };
+    wireguardPeers = [
+      {
+        wireguardPeerConfig = {
+          PublicKey = peerPublicKey;
+          PresharedKeyFile = presharedKeyFile;
+          Endpoint = endpoint;
+          PersistentKeepalive = 25;
+          AllowedIPs = [
+            "0.0.0.0/0"
+            "::/0"
+          ];
+          RouteTable = "off";
+        };
+      }
+    ];
+  };
 
   mkNetwork = name: address: {
     matchConfig.Name = name;
@@ -49,10 +46,9 @@ let
       LinkLocalAddressing = "no";
       ConfigureWithoutCarrier = true;
     };
-    address = [ address ];
+    address = [address];
   };
-in
-{
+in {
   sops.secrets = {
     wireguard_node0_private.owner = "systemd-network";
     wireguard_node0_psk.owner = "systemd-network";
@@ -63,6 +59,8 @@ in
   };
 
   systemd.network = {
+    config.routeTables.XHAIN_BGP = bgpTable;
+
     netdevs = {
       "50-wg-node0" = mkNetdev {
         name = "wg-node0";
@@ -91,26 +89,46 @@ in
     };
 
     networks = {
-      "50-wg-node0" = (mkNetwork "wg-node0" "fe80::208:135:100/64") // {
-        routingPolicyRules = [
-          {
-            routingPolicyRuleConfig = {
-              FirewallMark = firewallMark;
-              Table = "main";
-              Priority = 1110;
-              Family = "both";
-            };
-          }
-          {
-            routingPolicyRuleConfig = {
-              FirewallMark = firewallMark;
-              Type = "unreachable";
-              Priority = 1210;
-              Family = "both";
-            };
-          }
-        ];
-      };
+      "50-wg-node0" =
+        (mkNetwork "wg-node0" "fe80::208:135:100/64")
+        // {
+          routingPolicyRules = [
+            {
+              routingPolicyRuleConfig = {
+                FirewallMark = firewallMark;
+                Table = "main";
+                Priority = 1110;
+                Family = "both";
+              };
+            }
+            {
+              routingPolicyRuleConfig = {
+                FirewallMark = firewallMark;
+                Type = "unreachable";
+                Priority = 1210;
+                Family = "both";
+              };
+            }
+            {
+              routingPolicyRuleConfig = {
+                From = "2a0f:5387:ffff::/48";
+                Table = bgpTable;
+                Priority = 1410;
+                Family = "ipv6";
+              };
+            }
+          ];
+          routes = [
+            {
+              routeConfig = {
+                Destination = "2a0f:5387:ffff::/48";
+                Type = "blackhole";
+                Table = "main";
+                Metric = 42760;
+              };
+            }
+          ];
+        };
       "50-wg-node1" = mkNetwork "wg-node1" "fe80::208:135:101/64";
       "50-wg-node2" = mkNetwork "wg-node2" "fe80::208:135:102/64";
     };
@@ -121,4 +139,19 @@ in
     51831
     51832
   ];
+
+  networking.firewall.interfaces = {
+    wg-node0 = {
+      allowedTCPPorts = [179];
+      allowedUDPPorts = [3784];
+    };
+    wg-node1 = {
+      allowedTCPPorts = [179];
+      allowedUDPPorts = [3784];
+    };
+    wg-node2 = {
+      allowedTCPPorts = [179];
+      allowedUDPPorts = [3784];
+    };
+  };
 }

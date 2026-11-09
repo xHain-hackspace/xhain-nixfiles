@@ -4,9 +4,7 @@
   pkgs,
   inputs,
   ...
-}:
-
-{
+}: {
   imports = [
     inputs.sops-nix.nixosModules.sops
     ../../modules/nftables
@@ -19,6 +17,7 @@
     ./hardware-configuration.nix
     ./wireguard.nix
     ./xhain-wireguard.nix
+    ./bgp-redundancy.nix
     ./lan.nix
     ./dns.nix
     ./dhcp.nix
@@ -42,7 +41,7 @@
   networking.useNetworkd = true;
   services.resolved.dnssec = "false";
 
-  xhain.dns.acmeHosts = [ "homeassistant.lan.xhain.space" ];
+  xhain.dns.acmeHosts = ["homeassistant.lan.xhain.space"];
 
   # sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
   sops.defaultSopsFile = ../../secrets/router.yaml;
