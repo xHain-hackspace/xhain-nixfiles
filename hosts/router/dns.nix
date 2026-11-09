@@ -10,19 +10,38 @@ with lib;
 
 let
   cfg = config.xhain.dns;
+  ipv4ReverseZone = "192-255.40.158.45.in-addr.arpa.";
+  ipv6ReverseZone = "f.f.f.f.7.8.3.5.f.0.a.2.ip6.arpa.";
   acmeKeyName = host: "acme-${host}";
   acmeSecretName = host: "bind-${acmeKeyName host}";
   hostsInZone = zone: filter (host: hasSuffix ".${zone}" "${host}.") cfg.acmeHosts;
-  templateFile = pkgs.writeText "template.zone" ''
-    $TTL 3600
-    @               IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2021112802 7200 900 1209600 86400
-                    IN      NS         ns1.xhain.space.
-  '';
-  dynamicZones = [
+  templateFile =
+    zone:
+    pkgs.writeText "template-${zone}zone" ''
+      $TTL 3600
+      @ IN SOA ns1.xhain.space. hostmaster.x-hain.de. 2026110901 7200 900 1209600 3600
+      @ IN NS ns1.xhain.space.
+      ${optionalString (zone == ipv4ReverseZone) ''
+        192 IN PTR router.xhain.space.
+        193 IN PTR router-hosting.xhain.space.
+      ''}
+      ${optionalString (zone == ipv6ReverseZone) ''
+        1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2.4.3.1 IN PTR router.xhain.space.
+        1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.7.3.3.1 IN PTR router-hosting.xhain.space.
+        1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2.1.3.1 IN PTR router-guest.xhain.space.
+        1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.3.2.3.1 IN PTR router-voc.xhain.space.
+      ''}
+    '';
+  forwardDynamicZones = [
     "lan.xhain.space."
     "hosting.xhain.space."
     "guest.xhain.space."
   ];
+  reverseDynamicZones = [
+    ipv4ReverseZone
+    ipv6ReverseZone
+  ];
+  dynamicZones = forwardDynamicZones ++ reverseDynamicZones;
   mkDynamicZone = name: {
     inherit name;
     master = true;
@@ -33,7 +52,9 @@ let
     file = "/var/lib/bind/${name}zone";
     extraConfig = ''
       ${
-        if hostsInZone name != [ ] then
+        if elem name reverseDynamicZones then
+          ""
+        else if hostsInZone name != [ ] then
           ''
             update-policy {
               grant rndc-key zonesub ANY;
@@ -45,6 +66,9 @@ let
         else
           ''allow-update { key "rndc-key"; };''
       }
+      ${optionalString (elem name reverseDynamicZones) ''
+        dnssec-policy default;
+      ''}
       journal "/var/run/named/${name}zone.jnl";
     '';
   };
@@ -71,7 +95,7 @@ in
     })
     {
       assertions = map (host: {
-        assertion = any (zone: hasSuffix ".${zone}" "${host}.") dynamicZones;
+        assertion = any (zone: hasSuffix ".${zone}" "${host}.") forwardDynamicZones;
         message = "xhain.dns.acmeHosts: ${host} is not in a dynamic zone";
       }) cfg.acmeHosts;
 
@@ -88,7 +112,7 @@ in
             ${concatStrings (
               map (zone: ''
                 if [[ ! -f /var/lib/bind/${zone}zone ]]; then
-                  cp "${templateFile}" "/var/lib/bind/${zone}zone"
+                  cp "${templateFile zone}" "/var/lib/bind/${zone}zone"
                 fi
                 chmod 0644 "/var/lib/bind/${zone}zone"
                 chown named "/var/lib/bind/${zone}zone"
@@ -111,17 +135,10 @@ in
           "127.0.0.0/8"
           "::/64"
           "192.168.42.0/23"
-          "2a0f:5382:acab:1342::/64"
-          "2a0f:5387:ffff:1342::/64"
           "45.158.40.192/26"
-          "2a0f:5382:acab:1337::/64"
-          "2a0f:5387:ffff:1337::/64"
           "192.168.12.0/23"
-          "2a0f:5382:acab:1312::/64"
-          "2a0f:5387:ffff:1312::/64"
           "10.73.243.0/24"
-          "2a0f:5382:acab:1323::/64"
-          "2a0f:5387:ffff:1323::/64"
+          "2a0f:5387:ffff::/48"
         ];
         zones = [
           {
@@ -139,6 +156,7 @@ in
 
       networking.firewall.allowedUDPPorts = [ 53 ];
       networking.firewall.allowedTCPPorts = [ 53 ];
+
     }
   ];
 }

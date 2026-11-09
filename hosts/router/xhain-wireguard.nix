@@ -1,5 +1,4 @@
 {config, ...}: let
-  firewallMark = 51829;
   bgpTable = 208135;
 
   mkNetdev = {
@@ -18,7 +17,6 @@
     wireguardConfig = {
       PrivateKeyFile = privateKeyFile;
       ListenPort = listenPort;
-      FirewallMark = firewallMark;
     };
     wireguardPeers = [
       {
@@ -93,61 +91,44 @@ in {
         (mkNetwork "wg-node0" "fe80::208:135:100/64")
         // {
           routingPolicyRules = [
+            # Prefer every specific route from main, but not its default route.
             {
-              routingPolicyRuleConfig = {
-                FirewallMark = firewallMark;
-                Table = "main";
-                Priority = 1110;
-                Family = "both";
-              };
+              Table = "main";
+              SuppressPrefixLength = 0;
+              Priority = 1000;
+              Family = "both";
+            }
+
+            # Everything sourced from the site uses the BGP default route.
+            {
+              From = "10.73.243.0/24";
+              Table = bgpTable;
+              Priority = 1100;
+              Family = "ipv4";
             }
             {
-              routingPolicyRuleConfig = {
-                FirewallMark = firewallMark;
-                Type = "unreachable";
-                Priority = 1210;
-                Family = "both";
-              };
+              From = "192.168.12.0/23";
+              Table = bgpTable;
+              Priority = 1100;
+              Family = "ipv4";
             }
             {
-              routingPolicyRuleConfig = {
-                From = "192.168.12.0/23";
-                Table = bgpTable;
-                Priority = 1290;
-                Family = "ipv4";
-              };
+              From = "192.168.42.0/23";
+              Table = bgpTable;
+              Priority = 1100;
+              Family = "ipv4";
             }
             {
-              routingPolicyRuleConfig = {
-                From = "10.73.243.0/24";
-                Table = bgpTable;
-                Priority = 1290;
-                Family = "ipv4";
-              };
+              From = "45.158.40.192/26";
+              Table = bgpTable;
+              Priority = 1100;
+              Family = "ipv4";
             }
             {
-              routingPolicyRuleConfig = {
-                From = "192.168.42.0/23";
-                Table = bgpTable;
-                Priority = 1290;
-                Family = "ipv4";
-              };
-            }
-            {
-              routingPolicyRuleConfig = {
-                From = "45.158.40.192/26";
-                Table = bgpTable;
-                Priority = 1390;
-                Family = "ipv4";
-              };
-            }
-            {
-              routingPolicyRuleConfig = {
-                From = "2a0f:5387:ffff::/48";
-                Table = bgpTable;
-                Priority = 1410;
-                Family = "ipv6";
-              };
+              From = "2a0f:5387:ffff::/48";
+              Table = bgpTable;
+              Priority = 1100;
+              Family = "ipv6";
             }
           ];
           routes = [

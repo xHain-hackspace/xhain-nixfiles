@@ -9,6 +9,10 @@ router                IN      A          45.158.40.192
                       IN      AAAA       2a0f:5387:ffff:1342::1
 ns1                   IN      A          45.158.40.192
                       IN      AAAA       2a0f:5387:ffff:1342::1
+router-hosting        IN      A          45.158.40.193
+                      IN      AAAA       2a0f:5387:ffff:1337::1
+router-guest          IN      AAAA       2a0f:5387:ffff:1312::1
+router-voc            IN      AAAA       2a0f:5387:ffff:1323::1
 
 lan                   IN      NS         ns1.xhain.space.
 hosting               IN      NS         ns1.xhain.space.
