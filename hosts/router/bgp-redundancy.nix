@@ -6,8 +6,10 @@
 
       define MY_ASN = 4200208135;
       define FLUEPKE_ASN = 208135;
+      define XHAIN_PREFIX_V4 = 45.158.40.192/26;
       define XHAIN_PREFIX_V6 = 2a0f:5387:ffff::/48;
 
+      ipv4 table xhain_default_v4;
       ipv6 table xhain_full_v6;
 
       protocol device {
@@ -31,6 +33,25 @@
         route XHAIN_PREFIX_V6 blackhole;
       }
 
+      protocol static originate_xhain_v4 {
+        ipv4 {
+          table xhain_default_v4;
+        };
+
+        route XHAIN_PREFIX_V4 blackhole;
+      }
+
+      protocol kernel kernel_default_v4 {
+        kernel table 208135;
+        scan time 10;
+
+        ipv4 {
+          table xhain_default_v4;
+          import none;
+          export all;
+        };
+      }
+
       protocol kernel kernel_full_v6 {
         kernel table 208135;
         scan time 10;
@@ -48,6 +69,29 @@
         if net.len > 48 then reject;
         bgp_local_pref = 300;
         accept;
+      }
+
+      filter import_node0_v4 {
+        if net != 0.0.0.0/0 then reject;
+        bgp_local_pref = 300;
+        accept;
+      }
+
+      filter import_node2_v4 {
+        if net != 0.0.0.0/0 then reject;
+        bgp_local_pref = 200;
+        accept;
+      }
+
+      filter import_node1_v4 {
+        if net != 0.0.0.0/0 then reject;
+        bgp_local_pref = 100;
+        accept;
+      }
+
+      filter export_xhain_v4 {
+        if net = XHAIN_PREFIX_V4 && proto = "originate_xhain_v4" then accept;
+        reject;
       }
 
       filter import_node2_v6 {
@@ -100,6 +144,15 @@
         error wait time 1, 5;
         error forget time 10;
 
+        ipv4 {
+          table xhain_default_v4;
+          extended next hop on;
+          import keep filtered;
+          import none;
+          export none;
+          next hop self;
+        };
+
         ipv6 {
           table xhain_full_v6;
           import keep filtered;
@@ -113,6 +166,15 @@
         source address fe80::208:135:100;
         neighbor fe80::208:135:0%'wg-node0' as FLUEPKE_ASN;
         interface "wg-node0";
+
+        ipv4 {
+          table xhain_default_v4;
+          extended next hop on;
+          import keep filtered;
+          import filter import_node0_v4;
+          export filter export_xhain_v4;
+          next hop self;
+        };
 
         ipv6 {
           table xhain_full_v6;
@@ -128,6 +190,15 @@
         neighbor fe80::208:135:2%'wg-node2' as FLUEPKE_ASN;
         interface "wg-node2";
 
+        ipv4 {
+          table xhain_default_v4;
+          extended next hop on;
+          import keep filtered;
+          import filter import_node2_v4;
+          export filter export_xhain_v4;
+          next hop self;
+        };
+
         ipv6 {
           table xhain_full_v6;
           import keep filtered;
@@ -141,6 +212,15 @@
         source address fe80::208:135:101;
         neighbor fe80::208:135:1%'wg-node1' as FLUEPKE_ASN;
         interface "wg-node1";
+
+        ipv4 {
+          table xhain_default_v4;
+          extended next hop on;
+          import keep filtered;
+          import filter import_node1_v4;
+          export filter export_xhain_v4;
+          next hop self;
+        };
 
         ipv6 {
           table xhain_full_v6;
