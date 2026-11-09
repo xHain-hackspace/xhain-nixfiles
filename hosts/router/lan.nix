@@ -106,6 +106,11 @@
     config = ''
       interface intern {
         AdvSendAdvert on;
+        prefix 2a0f:5382:acab:1342::/64 {
+          AdvPreferredLifetime 0;
+          AdvValidLifetime 0;
+          AdvRouterAddr on;
+        };
         prefix 2a0f:5387:ffff:1342::/64 {
           AdvRouterAddr on;
         };
@@ -113,6 +118,11 @@
       };
       interface hosting {
         AdvSendAdvert on;
+        prefix 2a0f:5382:acab:1337::/64 {
+          AdvPreferredLifetime 0;
+          AdvValidLifetime 0;
+          AdvRouterAddr on;
+        };
         prefix 2a0f:5387:ffff:1337::/64 {
           AdvRouterAddr on;
         };
@@ -120,6 +130,11 @@
       };
       interface guest {
         AdvSendAdvert on;
+        prefix 2a0f:5382:acab:1312::/64 {
+          AdvPreferredLifetime 0;
+          AdvValidLifetime 0;
+          AdvRouterAddr on;
+        };
         prefix 2a0f:5387:ffff:1312::/64 {
           AdvRouterAddr on;
         };
@@ -127,6 +142,11 @@
       };
       interface voc {
         AdvSendAdvert on;
+        prefix 2a0f:5382:acab:1323::/64 {
+          AdvPreferredLifetime 0;
+          AdvValidLifetime 0;
+          AdvRouterAddr on;
+        };
         prefix 2a0f:5387:ffff:1323::/64 {
           AdvRouterAddr on;
         };
