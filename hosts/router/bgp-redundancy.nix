@@ -95,6 +95,10 @@
         bfd on;
         hold time 9;
         keepalive time 3;
+        connect delay time 1;
+        connect retry time 3;
+        error wait time 1, 5;
+        error forget time 10;
 
         ipv6 {
           table xhain_full_v6;
