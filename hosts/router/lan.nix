@@ -39,6 +39,10 @@
         address = "2a0f:5382:acab:1342::1";
         prefixLength = 64;
       }
+      {
+        address = "2a0f:5387:ffff:1342::1";
+        prefixLength = 64;
+      }
     ];
   };
   networking.interfaces.hosting = {
@@ -53,6 +57,10 @@
         address = "2a0f:5382:acab:1337::1";
         prefixLength = 64;
       }
+      {
+        address = "2a0f:5387:ffff:1337::1";
+        prefixLength = 64;
+      }
     ];
   };
   networking.interfaces.guest = {
@@ -65,6 +73,10 @@
     ipv6.addresses = [
       {
         address = "2a0f:5382:acab:1312::1";
+        prefixLength = 64;
+      }
+      {
+        address = "2a0f:5387:ffff:1312::1";
         prefixLength = 64;
       }
     ];
@@ -82,6 +94,10 @@
         address = "2a0f:5382:acab:1323::1";
         prefixLength = 64;
       }
+      {
+        address = "2a0f:5387:ffff:1323::1";
+        prefixLength = 64;
+      }
     ];
   };
 
@@ -90,31 +106,31 @@
     config = ''
       interface intern {
         AdvSendAdvert on;
-        prefix 2a0f:5382:acab:1342::/64 {
+        prefix 2a0f:5387:ffff:1342::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2a0f:5382:acab:1342::1 {};
+        RDNSS 2a0f:5387:ffff:1342::1 {};
       };
       interface hosting {
         AdvSendAdvert on;
-        prefix 2a0f:5382:acab:1337::/64 {
+        prefix 2a0f:5387:ffff:1337::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2a0f:5382:acab:1337::1 {};
+        RDNSS 2a0f:5387:ffff:1337::1 {};
       };
       interface guest {
         AdvSendAdvert on;
-        prefix 2a0f:5382:acab:1312::/64 {
+        prefix 2a0f:5387:ffff:1312::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2a0f:5382:acab:1312::1 {};
+        RDNSS 2a0f:5387:ffff:1312::1 {};
       };
       interface voc {
         AdvSendAdvert on;
-        prefix 2a0f:5382:acab:1323::/64 {
+        prefix 2a0f:5387:ffff:1323::/64 {
           AdvRouterAddr on;
         };
-        RDNSS 2a0f:5382:acab:1323::1 {};
+        RDNSS 2a0f:5387:ffff:1323::1 {};
       };
     '';
   };
