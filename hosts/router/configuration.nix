@@ -18,6 +18,7 @@
     ./local_modules
     ./hardware-configuration.nix
     ./wireguard.nix
+    ./xhain-wireguard.nix
     ./lan.nix
     ./dns.nix
     ./dhcp.nix
