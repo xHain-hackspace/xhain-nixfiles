@@ -26,7 +26,6 @@ in
               PersistentKeepalive = 21;
               Endpoint = "45.158.40.0:51213";
               AllowedIPs = [
-                "0.0.0.0/0"
                 "::/0"
               ];
             };
@@ -64,34 +63,6 @@ in
           }
           {
             routingPolicyRuleConfig = {
-              From = "192.168.12.0/23";
-              Table = 51820;
-              Priority = 1300;
-            };
-          }
-          {
-            routingPolicyRuleConfig = {
-              From = "10.73.243.0/24";
-              Table = 51820;
-              Priority = 1300;
-            };
-          }
-          {
-            routingPolicyRuleConfig = {
-              From = "192.168.42.0/23";
-              Table = 51820;
-              Priority = 1300;
-            };
-          }
-          {
-            routingPolicyRuleConfig = {
-              From = "45.158.40.192/26";
-              Table = 51820;
-              Priority = 1400;
-            };
-          }
-          {
-            routingPolicyRuleConfig = {
               From = "2a0f:5382:acab:1300::/56";
               Table = 51820;
               Priority = 1400;
@@ -109,13 +80,6 @@ in
           {
             routeConfig = {
               Scope = "link";
-              Destination = "0.0.0.0/0";
-              Table = port;
-            };
-          }
-          {
-            routeConfig = {
-              Scope = "link";
               Destination = "::/0";
               Table = port;
             };
@@ -125,14 +89,14 @@ in
     };
   };
 
-  networking.interfaces.wg0 = {
-    ipv4.addresses = [
+  networking.interfaces = {
+    lo.ipv4.addresses = [
       {
         address = "45.158.40.192";
         prefixLength = 32;
       }
     ];
-    ipv6.addresses = [
+    wg0.ipv6.addresses = [
       {
         address = "2a0f:5382:acab:1300::1";
         prefixLength = 128;
