@@ -1,39 +1,42 @@
-{config, ...}: let
+{ config, ... }:
+let
   bgpTable = 208135;
 
-  mkNetdev = {
-    name,
-    privateKeyFile,
-    listenPort,
-    peerPublicKey,
-    presharedKeyFile,
-    endpoint,
-  }: {
-    netdevConfig = {
-      Name = name;
-      Kind = "wireguard";
-      MTUBytes = 1380;
+  mkNetdev =
+    {
+      name,
+      privateKeyFile,
+      listenPort,
+      peerPublicKey,
+      presharedKeyFile,
+      endpoint,
+    }:
+    {
+      netdevConfig = {
+        Name = name;
+        Kind = "wireguard";
+        MTUBytes = 1380;
+      };
+      wireguardConfig = {
+        PrivateKeyFile = privateKeyFile;
+        ListenPort = listenPort;
+      };
+      wireguardPeers = [
+        {
+          wireguardPeerConfig = {
+            PublicKey = peerPublicKey;
+            PresharedKeyFile = presharedKeyFile;
+            Endpoint = endpoint;
+            PersistentKeepalive = 25;
+            AllowedIPs = [
+              "0.0.0.0/0"
+              "::/0"
+            ];
+            RouteTable = "off";
+          };
+        }
+      ];
     };
-    wireguardConfig = {
-      PrivateKeyFile = privateKeyFile;
-      ListenPort = listenPort;
-    };
-    wireguardPeers = [
-      {
-        wireguardPeerConfig = {
-          PublicKey = peerPublicKey;
-          PresharedKeyFile = presharedKeyFile;
-          Endpoint = endpoint;
-          PersistentKeepalive = 25;
-          AllowedIPs = [
-            "0.0.0.0/0"
-            "::/0"
-          ];
-          RouteTable = "off";
-        };
-      }
-    ];
-  };
 
   mkNetwork = name: address: {
     matchConfig.Name = name;
@@ -44,9 +47,10 @@
       LinkLocalAddressing = "no";
       ConfigureWithoutCarrier = true;
     };
-    address = [address];
+    address = [ address ];
   };
-in {
+in
+{
   sops.secrets = {
     wireguard_node0_private.owner = "systemd-network";
     wireguard_node0_psk.owner = "systemd-network";
@@ -87,61 +91,59 @@ in {
     };
 
     networks = {
-      "50-wg-node0" =
-        (mkNetwork "wg-node0" "fe80::208:135:100/64")
-        // {
-          routingPolicyRules = [
-            # Prefer every specific route from main, but not its default route.
-            {
-              Table = "main";
-              SuppressPrefixLength = 0;
-              Priority = 1000;
-              Family = "both";
-            }
+      "50-wg-node0" = (mkNetwork "wg-node0" "fe80::208:135:100/64") // {
+        routingPolicyRules = [
+          # Prefer every specific route from main, but not its default route.
+          {
+            Table = "main";
+            SuppressPrefixLength = 0;
+            Priority = 1000;
+            Family = "both";
+          }
 
-            # Everything sourced from the site uses the BGP default route.
-            {
-              From = "10.73.243.0/24";
-              Table = bgpTable;
-              Priority = 1100;
-              Family = "ipv4";
-            }
-            {
-              From = "192.168.12.0/23";
-              Table = bgpTable;
-              Priority = 1100;
-              Family = "ipv4";
-            }
-            {
-              From = "192.168.42.0/23";
-              Table = bgpTable;
-              Priority = 1100;
-              Family = "ipv4";
-            }
-            {
-              From = "45.158.40.192/26";
-              Table = bgpTable;
-              Priority = 1100;
-              Family = "ipv4";
-            }
-            {
-              From = "2a0f:5387:ffff::/48";
-              Table = bgpTable;
-              Priority = 1100;
-              Family = "ipv6";
-            }
-          ];
-          routes = [
-            {
-              routeConfig = {
-                Destination = "2a0f:5387:ffff::/48";
-                Type = "blackhole";
-                Table = "main";
-                Metric = 42760;
-              };
-            }
-          ];
-        };
+          # Everything sourced from the site uses the BGP default route.
+          {
+            From = "10.73.243.0/24";
+            Table = bgpTable;
+            Priority = 1100;
+            Family = "ipv4";
+          }
+          {
+            From = "192.168.12.0/23";
+            Table = bgpTable;
+            Priority = 1100;
+            Family = "ipv4";
+          }
+          {
+            From = "192.168.42.0/23";
+            Table = bgpTable;
+            Priority = 1100;
+            Family = "ipv4";
+          }
+          {
+            From = "45.158.40.192/26";
+            Table = bgpTable;
+            Priority = 1100;
+            Family = "ipv4";
+          }
+          {
+            From = "2a0f:5387:ffff::/48";
+            Table = bgpTable;
+            Priority = 1100;
+            Family = "ipv6";
+          }
+        ];
+        routes = [
+          {
+            routeConfig = {
+              Destination = "2a0f:5387:ffff::/48";
+              Type = "blackhole";
+              Table = "main";
+              Metric = 42760;
+            };
+          }
+        ];
+      };
       "50-wg-node1" = mkNetwork "wg-node1" "fe80::208:135:101/64";
       "50-wg-node2" = mkNetwork "wg-node2" "fe80::208:135:102/64";
     };
@@ -155,16 +157,16 @@ in {
 
   networking.firewall.interfaces = {
     wg-node0 = {
-      allowedTCPPorts = [179];
-      allowedUDPPorts = [3784];
+      allowedTCPPorts = [ 179 ];
+      allowedUDPPorts = [ 3784 ];
     };
     wg-node1 = {
-      allowedTCPPorts = [179];
-      allowedUDPPorts = [3784];
+      allowedTCPPorts = [ 179 ];
+      allowedUDPPorts = [ 3784 ];
     };
     wg-node2 = {
-      allowedTCPPorts = [179];
-      allowedUDPPorts = [3784];
+      allowedTCPPorts = [ 179 ];
+      allowedUDPPorts = [ 3784 ];
     };
   };
 }
