@@ -40,7 +40,7 @@
   networking.useDHCP = false;
   networking.interfaces.enp1s0.useDHCP = true;
   networking.useNetworkd = true;
-  services.resolved.dnssec = "false";
+  services.resolved.settings.Resolve.DNSSEC = false;
 
   xhain.dns.acmeHosts = [ "homeassistant.lan.xhain.space" ];
 

@@ -23,17 +23,15 @@ let
       };
       wireguardPeers = [
         {
-          wireguardPeerConfig = {
-            PublicKey = peerPublicKey;
-            PresharedKeyFile = presharedKeyFile;
-            Endpoint = endpoint;
-            PersistentKeepalive = 25;
-            AllowedIPs = [
-              "0.0.0.0/0"
-              "::/0"
-            ];
-            RouteTable = "off";
-          };
+          PublicKey = peerPublicKey;
+          PresharedKeyFile = presharedKeyFile;
+          Endpoint = endpoint;
+          PersistentKeepalive = 25;
+          AllowedIPs = [
+            "0.0.0.0/0"
+            "::/0"
+          ];
+          RouteTable = "off";
         }
       ];
     };
@@ -135,12 +133,10 @@ in
         ];
         routes = [
           {
-            routeConfig = {
-              Destination = "2a0f:5387:ffff::/48";
-              Type = "blackhole";
-              Table = "main";
-              Metric = 42760;
-            };
+            Destination = "2a0f:5387:ffff::/48";
+            Type = "blackhole";
+            Table = "main";
+            Metric = 42760;
           }
         ];
       };
