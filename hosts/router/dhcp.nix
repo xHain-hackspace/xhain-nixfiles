@@ -13,6 +13,9 @@ let
       subnet = "192.168.42.0/23";
       router = "192.168.42.1";
       dhcp_range = "192.168.42.30 - 192.168.43.254";
+      ipv6_subnet = "2a0f:5387:ffff:1342::/64";
+      ipv6_router = "2a0f:5387:ffff:1342::1";
+      ipv6_pool = "2a0f:5387:ffff:1342::1000 - 2a0f:5387:ffff:1342::ffff";
       ddns_domain = "lan.xhain.space.";
       reservations = [
         {
@@ -26,6 +29,9 @@ let
       subnet = "45.158.40.192/26";
       router = "45.158.40.193";
       dhcp_range = "45.158.40.201 - 45.158.40.254";
+      ipv6_subnet = "2a0f:5387:ffff:1337::/64";
+      ipv6_router = "2a0f:5387:ffff:1337::1";
+      ipv6_pool = "2a0f:5387:ffff:1337::1000 - 2a0f:5387:ffff:1337::ffff";
       ddns_domain = "hosting.xhain.space.";
     };
     guest = {
@@ -33,6 +39,9 @@ let
       subnet = "192.168.12.0/23";
       router = "192.168.12.1";
       dhcp_range = "192.168.12.30 - 192.168.13.254";
+      ipv6_subnet = "2a0f:5387:ffff:1312::/64";
+      ipv6_router = "2a0f:5387:ffff:1312::1";
+      ipv6_pool = "2a0f:5387:ffff:1312::1000 - 2a0f:5387:ffff:1312::ffff";
       ddns_domain = "guest.xhain.space.";
     };
     voc = {
@@ -40,41 +49,97 @@ let
       subnet = "10.73.243.0/24";
       router = "10.73.243.1";
       dhcp_range = "10.73.243.20 - 10.73.243.254";
+      ipv6_subnet = "2a0f:5387:ffff:1323::/64";
+      ipv6_router = "2a0f:5387:ffff:1323::1";
+      ipv6_pool = "2a0f:5387:ffff:1323::1000 - 2a0f:5387:ffff:1323::ffff";
       ddns_domain = "lan.c3voc.de.";
     };
   };
 
-  mkKeaSubnet = name: attrs: {
-    id = attrs.id;
-    subnet = attrs.subnet;
-    pools = [ { pool = attrs.dhcp_range; } ];
-    reservations = attrs.reservations or [ ];
-    ddns-qualifying-suffix = attrs.ddns_domain;
-    option-data = [
-      {
-        name = "routers";
-        data = attrs.router;
-      }
-      {
-        name = "domain-name-servers";
-        data = attrs.router;
-      }
-      {
-        name = "domain-name";
-        data = attrs.ddns_domain;
-      }
-      {
-        name = "domain-search";
-        data = attrs.ddns_domain;
-      }
-    ];
-  };
+  trustedDdnsSubnets = [
+    "lan"
+    "hosting"
+  ];
+  ddnsSubnets = removeAttrs subnets [ "voc" ];
+
+  mkKeaSubnet =
+    name: attrs:
+    {
+      id = attrs.id;
+      subnet = attrs.subnet;
+      pools = [ { pool = attrs.dhcp_range; } ];
+      reservations = attrs.reservations or [ ];
+      ddns-qualifying-suffix = attrs.ddns_domain;
+      option-data = [
+        {
+          name = "routers";
+          data = attrs.router;
+        }
+        {
+          name = "domain-name-servers";
+          data = attrs.router;
+        }
+        {
+          name = "domain-name";
+          data = attrs.ddns_domain;
+        }
+        {
+          name = "domain-search";
+          data = attrs.ddns_domain;
+        }
+      ];
+    }
+    // lib.optionalAttrs (lib.elem name trustedDdnsSubnets) {
+      # DHCPv4 client IDs and DHCPv6 DUIDs differ even on one dual-stack
+      # host. Allow the trusted networks to maintain A and AAAA records for
+      # one FQDN despite the differing DHCID values.
+      ddns-conflict-resolution-mode = "no-check-with-dhcid";
+    }
+    // lib.optionalAttrs (name == "guest") {
+      # Guest-supplied names must not be able to replace another client's
+      # records. Address-derived names are unique within the pool.
+      ddns-replace-client-name = "always";
+      ddns-generated-prefix = "guest4";
+    }
+    // lib.optionalAttrs (name == "voc") {
+      # The local BIND server is not authoritative for lan.c3voc.de.
+      ddns-send-updates = false;
+    };
   mkKeaDdnsDomains = name: attrs: ''
     {
             "dns-servers": [{"ip-address": "127.0.0.1"}],
             "key-name": "rndc-key",
             "name": "${attrs.ddns_domain}"
           }'';
+  mkKeaSubnet6 =
+    name: attrs:
+    {
+      id = attrs.id;
+      subnet = attrs.ipv6_subnet;
+      interface = if name == "lan" then "intern" else name;
+      pools = [ { pool = attrs.ipv6_pool; } ];
+      ddns-qualifying-suffix = attrs.ddns_domain;
+      option-data = [
+        {
+          name = "dns-servers";
+          data = attrs.ipv6_router;
+        }
+        {
+          name = "domain-search";
+          data = attrs.ddns_domain;
+        }
+      ];
+    }
+    // lib.optionalAttrs (lib.elem name trustedDdnsSubnets) {
+      ddns-conflict-resolution-mode = "no-check-with-dhcid";
+    }
+    // lib.optionalAttrs (name == "guest") {
+      ddns-replace-client-name = "always";
+      ddns-generated-prefix = "guest6";
+    }
+    // lib.optionalAttrs (name == "voc") {
+      ddns-send-updates = false;
+    };
   controlSocket = "/run/kea/dhcp4.sock";
 in
 {
@@ -118,6 +183,7 @@ in
         ddns-override-client-update = true;
         ddns-override-no-update = true;
         ddns-update-on-renew = true; # disable this to improve performance
+        ddns-conflict-resolution-mode = "check-with-dhcid";
 
         hostname-char-set = "[^A-Za-z0-9.-]";
         hostname-char-replacement = "-";
@@ -182,6 +248,43 @@ in
       };
     };
 
+    dhcp6 = {
+      enable = true;
+
+      settings = {
+        valid-lifetime = 7200;
+        preferred-lifetime = 3600;
+        renew-timer = 1800;
+        rebind-timer = 3150;
+
+        interfaces-config.interfaces = [
+          "voc"
+          "intern"
+          "hosting"
+          "guest"
+        ];
+
+        lease-database = {
+          type = "memfile";
+          persist = true;
+          name = "/var/lib/kea/dhcp6.leases";
+        };
+
+        dhcp-ddns.enable-updates = true;
+        ddns-override-client-update = true;
+        ddns-override-no-update = true;
+        ddns-update-on-renew = true;
+        ddns-replace-client-name = "when-not-present";
+        ddns-generated-prefix = "host6";
+        ddns-conflict-resolution-mode = "check-with-dhcid";
+
+        hostname-char-set = "[^A-Za-z0-9.-]";
+        hostname-char-replacement = "-";
+
+        subnet6 = lib.mapAttrsToList mkKeaSubnet6 subnets;
+      };
+    };
+
     dhcp-ddns = {
       enable = true;
       # we can't use settings, because we need to embed the secret
@@ -190,12 +293,12 @@ in
           "DhcpDdns": {
             "forward-ddns": {
               "ddns-domains": [
-                ${lib.concatStringsSep ",\n" (lib.mapAttrsToList mkKeaDdnsDomains subnets)}
+                ${lib.concatStringsSep ",\n" (lib.mapAttrsToList mkKeaDdnsDomains ddnsSubnets)}
               ]
             },
             "tsig-keys": [
               <?include "${config.sops.secrets.kea-ddns-key.path}"?>
-            ],
+            ]
             # "loggers": [
             #   {
             #     "name": "kea-dhcp-ddns",
@@ -216,6 +319,7 @@ in
   };
 
   systemd.services.kea-dhcp4-server = {
+    after = [ "bind.service" ];
     serviceConfig.DynamicUser = lib.mkForce false;
     preStart = ''
       if [ -e "${controlSocket}" ]; then
@@ -224,7 +328,23 @@ in
       fi
     '';
   };
+  systemd.services.kea-dhcp6-server = {
+    after = [ "bind.service" ];
+    serviceConfig.DynamicUser = lib.mkForce false;
+  };
   systemd.services.kea-dhcp-ddns-server.serviceConfig.DynamicUser = lib.mkForce false;
+
+  networking.firewall.interfaces =
+    lib.genAttrs
+      [
+        "voc"
+        "intern"
+        "hosting"
+        "guest"
+      ]
+      (_: {
+        allowedUDPPorts = [ 547 ];
+      });
 
   services.kea-lease-viewer = {
     enable = true;

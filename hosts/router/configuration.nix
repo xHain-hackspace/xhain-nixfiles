@@ -5,7 +5,6 @@
   inputs,
   ...
 }:
-
 {
   imports = [
     inputs.sops-nix.nixosModules.sops
@@ -18,6 +17,8 @@
     ./local_modules
     ./hardware-configuration.nix
     ./wireguard.nix
+    ./xhain-wireguard.nix
+    ./bgp-redundancy.nix
     ./lan.nix
     ./dns.nix
     ./dhcp.nix
@@ -39,7 +40,7 @@
   networking.useDHCP = false;
   networking.interfaces.enp1s0.useDHCP = true;
   networking.useNetworkd = true;
-  services.resolved.dnssec = "false";
+  services.resolved.settings.Resolve.DNSSEC = false;
 
   xhain.dns.acmeHosts = [ "homeassistant.lan.xhain.space" ];
 
