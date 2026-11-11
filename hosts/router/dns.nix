@@ -67,6 +67,7 @@ let
           ''allow-update { key "rndc-key"; };''
       }
       ${optionalString (elem name reverseDynamicZones) ''
+        key-directory "/var/lib/bind";
         dnssec-policy default;
       ''}
       journal "/var/run/named/${name}zone.jnl";
@@ -109,6 +110,15 @@ in
         script = ''
           mkdir -p /var/lib/bind
           chown named /var/lib/bind
+          # Older generations used BIND's volatile /run/named default for
+          # dnssec-policy keys. Preserve those keys before switching to the
+          # persistent key-directory, especially when a DS is already live.
+          for key in /run/named/K*.key /run/named/K*.private /run/named/K*.state; do
+            if [[ -e "$key" && ! -e "/var/lib/bind/''${key##*/}" ]]; then
+              cp --preserve=mode,timestamps "$key" "/var/lib/bind/''${key##*/}"
+            fi
+          done
+          chown named:named /var/lib/bind/K* 2>/dev/null || true
             ${concatStrings (
               map (zone: ''
                 if [[ ! -f /var/lib/bind/${zone}zone ]]; then

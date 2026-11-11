@@ -56,53 +56,90 @@ let
     };
   };
 
-  mkKeaSubnet = name: attrs: {
-    id = attrs.id;
-    subnet = attrs.subnet;
-    pools = [ { pool = attrs.dhcp_range; } ];
-    reservations = attrs.reservations or [ ];
-    ddns-qualifying-suffix = attrs.ddns_domain;
-    option-data = [
-      {
-        name = "routers";
-        data = attrs.router;
-      }
-      {
-        name = "domain-name-servers";
-        data = attrs.router;
-      }
-      {
-        name = "domain-name";
-        data = attrs.ddns_domain;
-      }
-      {
-        name = "domain-search";
-        data = attrs.ddns_domain;
-      }
-    ];
-  };
+  trustedDdnsSubnets = [
+    "lan"
+    "hosting"
+  ];
+  ddnsSubnets = removeAttrs subnets [ "voc" ];
+
+  mkKeaSubnet =
+    name: attrs:
+    {
+      id = attrs.id;
+      subnet = attrs.subnet;
+      pools = [ { pool = attrs.dhcp_range; } ];
+      reservations = attrs.reservations or [ ];
+      ddns-qualifying-suffix = attrs.ddns_domain;
+      option-data = [
+        {
+          name = "routers";
+          data = attrs.router;
+        }
+        {
+          name = "domain-name-servers";
+          data = attrs.router;
+        }
+        {
+          name = "domain-name";
+          data = attrs.ddns_domain;
+        }
+        {
+          name = "domain-search";
+          data = attrs.ddns_domain;
+        }
+      ];
+    }
+    // lib.optionalAttrs (lib.elem name trustedDdnsSubnets) {
+      # DHCPv4 client IDs and DHCPv6 DUIDs differ even on one dual-stack
+      # host. Allow the trusted networks to maintain A and AAAA records for
+      # one FQDN despite the differing DHCID values.
+      ddns-conflict-resolution-mode = "no-check-with-dhcid";
+    }
+    // lib.optionalAttrs (name == "guest") {
+      # Guest-supplied names must not be able to replace another client's
+      # records. Address-derived names are unique within the pool.
+      ddns-replace-client-name = "always";
+      ddns-generated-prefix = "guest4";
+    }
+    // lib.optionalAttrs (name == "voc") {
+      # The local BIND server is not authoritative for lan.c3voc.de.
+      ddns-send-updates = false;
+    };
   mkKeaDdnsDomains = name: attrs: ''
     {
             "dns-servers": [{"ip-address": "127.0.0.1"}],
             "key-name": "rndc-key",
             "name": "${attrs.ddns_domain}"
           }'';
-  mkKeaSubnet6 = name: attrs: {
-    id = attrs.id;
-    subnet = attrs.ipv6_subnet;
-    pools = [ { pool = attrs.ipv6_pool; } ];
-    ddns-qualifying-suffix = attrs.ddns_domain;
-    option-data = [
-      {
-        name = "dns-servers";
-        data = attrs.ipv6_router;
-      }
-      {
-        name = "domain-search";
-        data = attrs.ddns_domain;
-      }
-    ];
-  };
+  mkKeaSubnet6 =
+    name: attrs:
+    {
+      id = attrs.id;
+      subnet = attrs.ipv6_subnet;
+      interface = if name == "lan" then "intern" else name;
+      pools = [ { pool = attrs.ipv6_pool; } ];
+      ddns-qualifying-suffix = attrs.ddns_domain;
+      option-data = [
+        {
+          name = "dns-servers";
+          data = attrs.ipv6_router;
+        }
+        {
+          name = "domain-search";
+          data = attrs.ddns_domain;
+        }
+      ];
+    }
+    // lib.optionalAttrs (lib.elem name trustedDdnsSubnets) {
+      ddns-conflict-resolution-mode = "no-check-with-dhcid";
+    }
+    // lib.optionalAttrs (name == "guest") {
+      ddns-replace-client-name = "always";
+      ddns-generated-prefix = "guest6";
+    }
+    // lib.optionalAttrs (name == "voc") {
+      ddns-send-updates = false;
+    };
   controlSocket = "/run/kea/dhcp4.sock";
 in
 {
@@ -146,9 +183,7 @@ in
         ddns-override-client-update = true;
         ddns-override-no-update = true;
         ddns-update-on-renew = true; # disable this to improve performance
-        # DHCPv4 client IDs and DHCPv6 DUIDs differ even on one dual-stack
-        # host. Avoid DHCID conflicts so A and AAAA can share its FQDN.
-        ddns-conflict-resolution-mode = "no-check-with-dhcid";
+        ddns-conflict-resolution-mode = "check-with-dhcid";
 
         hostname-char-set = "[^A-Za-z0-9.-]";
         hostname-char-replacement = "-";
@@ -241,7 +276,7 @@ in
         ddns-update-on-renew = true;
         ddns-replace-client-name = "when-not-present";
         ddns-generated-prefix = "host6";
-        ddns-conflict-resolution-mode = "no-check-with-dhcid";
+        ddns-conflict-resolution-mode = "check-with-dhcid";
 
         hostname-char-set = "[^A-Za-z0-9.-]";
         hostname-char-replacement = "-";
@@ -258,7 +293,7 @@ in
           "DhcpDdns": {
             "forward-ddns": {
               "ddns-domains": [
-                ${lib.concatStringsSep ",\n" (lib.mapAttrsToList mkKeaDdnsDomains subnets)}
+                ${lib.concatStringsSep ",\n" (lib.mapAttrsToList mkKeaDdnsDomains ddnsSubnets)}
               ]
             },
             "tsig-keys": [

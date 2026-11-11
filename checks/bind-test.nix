@@ -20,5 +20,6 @@ pkgs.testers.runNixOSTest {
     machine.wait_until_succeeds(
       "dig @localhost f.f.f.f.7.8.3.5.f.0.a.2.ip6.arpa. DNSKEY +short | grep -q ."
     )
+    machine.succeed("find /var/lib/bind -maxdepth 1 -name 'K*.private' | grep -q .")
   '';
 }
