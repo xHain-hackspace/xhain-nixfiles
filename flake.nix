@@ -107,6 +107,7 @@
             };
 
           nix-builder = { ... }: { };
+          prusa-connect = { ... }: { };
         };
       };
     };
