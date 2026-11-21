@@ -42,7 +42,10 @@
   networking.useNetworkd = true;
   services.resolved.settings.Resolve.DNSSEC = false;
 
-  xhain.dns.acmeHosts = [ "homeassistant.lan.xhain.space" ];
+  xhain.dns.acmeHosts = [
+    "homeassistant.lan.xhain.space"
+    "prusa-connect.lan.xhain.space"
+  ];
 
   # sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
   sops.defaultSopsFile = ../../secrets/router.yaml;

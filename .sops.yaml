@@ -1,18 +1,36 @@
 keys:
-  - &danimo age1jt9l7zef9mqdvjlkur2eqd6gsvyaj469nfxucv7dv08e3qpuvudswcf0ng
-  - &reimerei age1p7kfmmtpcaxp8ya54azxwufl85ru3rlnpay27d3h4nrucyn6afzqzw5zrz
-  - &lenny age164tnfsyunrhyyrmgdn437ajcyyn2ch4y453eu3e0s8z4jtnmc4qqfj0m5z
-  - &gueldi ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkN6Gh946RDixD57F0DVCKDSWTgJWIdW5YXbokMXuwi
-  - &fluepke age1wjcxl2hmzq3tdh0d6m3qzv5jwfwds94e0rxep4cmrnqy0ncmnprsjntwlr
+  - &admin_danimo age1jt9l7zef9mqdvjlkur2eqd6gsvyaj469nfxucv7dv08e3qpuvudswcf0ng
+  - &admin_reimerei age1p7kfmmtpcaxp8ya54azxwufl85ru3rlnpay27d3h4nrucyn6afzqzw5zrz
+  - &admin_lenny age164tnfsyunrhyyrmgdn437ajcyyn2ch4y453eu3e0s8z4jtnmc4qqfj0m5z
+  - &admin_gueldi ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkN6Gh946RDixD57F0DVCKDSWTgJWIdW5YXbokMXuwi
+  - &admin_fluepke age1wjcxl2hmzq3tdh0d6m3qzv5jwfwds94e0rxep4cmrnqy0ncmnprsjntwlr
   - &machine_router age139t43h3ey5zn2uj5wh42upzzfqv9m5x6rwdy3g29n77yr5kwadns4n5xcs
+  - &machine_pc age1t333534g6a9f4y4wfampexjgvrpekf0qy4hnwlpmrgj3c3hqg3xqc7frmv
 
 creation_rules:
-  - path_regex: (secrets|terraform)/[^/]+\.(yaml|json|env|ini|tfvars)$
+  - path_regex: terraform/secrets.tfvars
     key_groups:
       - age:
-          - *danimo
-          - *reimerei
-          - *lenny
-          - *gueldi
-          - *fluepke
+          - *admin_danimo
+          - *admin_reimerei
+          - *admin_lenny
+          - *admin_gueldi
+          - *admin_fluepke
+  - path_regex: secrets/router.yaml
+    key_groups:
+      - age:
+          - *admin_danimo
+          - *admin_reimerei
+          - *admin_lenny
+          - *admin_gueldi
+          - *admin_fluepke
           - *machine_router
+  - path_regex: secrets/prusa-connect.yaml
+    key_groups:
+      - age:
+          - *admin_danimo
+          - *admin_reimerei
+          - *admin_lenny
+          - *admin_gueldi
+          - *admin_fluepke
+          - *machine_pc

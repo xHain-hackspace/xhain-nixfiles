@@ -14,6 +14,7 @@ let
   ipv6ReverseZone = "f.f.f.f.7.8.3.5.f.0.a.2.ip6.arpa.";
   acmeKeyName = host: "acme-${host}";
   acmeSecretName = host: "bind-${acmeKeyName host}";
+  acmeKeyFile = host: cfg.acmeKeyFiles.${host} or config.sops.secrets.${acmeSecretName host}.path;
   hostsInZone = zone: filter (host: hasSuffix ".${zone}" "${host}.") cfg.acmeHosts;
   templateFile =
     zone:
@@ -87,11 +88,19 @@ in
     '';
   };
 
+  options.xhain.dns.acmeKeyFiles = mkOption {
+    type = types.attrsOf types.str;
+    default = { };
+    description = "Paths to externally provisioned BIND TSIG key files, keyed by ACME hostname.";
+  };
+
   config = mkMerge [
     # sops-nix isn't loaded in the bind VM test
     (optionalAttrs (options ? sops) {
       sops.secrets = listToAttrs (
-        map (host: nameValuePair (acmeSecretName host) { owner = "named"; }) cfg.acmeHosts
+        map (host: nameValuePair (acmeSecretName host) { owner = "named"; }) (
+          filter (host: !(hasAttr host cfg.acmeKeyFiles)) cfg.acmeHosts
+        )
       );
     })
     {
@@ -101,7 +110,7 @@ in
       }) cfg.acmeHosts;
 
       services.bind.extraConfig = concatMapStrings (host: ''
-        include "${config.sops.secrets.${acmeSecretName host}.path}";
+        include "${acmeKeyFile host}";
       '') cfg.acmeHosts;
 
       systemd.services."bind-create-dynamic-zones" = {

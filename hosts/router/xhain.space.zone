@@ -1,5 +1,5 @@
 $TTL 3600
-@                     IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2026110901 7200 900 1209600 86400
+@                     IN      SOA        ns1.xhain.space. hostmaster.x-hain.de. 2026112001 7200 900 1209600 86400
                       IN      NS         ns1.xhain.space.
                       IN      A          45.158.40.192
                       IN      AAAA       2a0f:5387:ffff:1342::1
